@@ -1,0 +1,8 @@
+# Maven files
+target/
+
+# IDE files
+.settings/
+.project
+.classpath
+.factorypath
