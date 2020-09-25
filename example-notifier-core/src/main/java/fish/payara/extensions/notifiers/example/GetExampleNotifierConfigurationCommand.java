@@ -37,20 +37,48 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extras.notifiers.example;
+package fish.payara.extensions.notifiers.example;
 
-import java.beans.PropertyVetoException;
+import java.util.Map;
 
-import org.jvnet.hk2.config.Attribute;
-import org.jvnet.hk2.config.Configured;
+import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.RestEndpoint;
+import org.glassfish.api.admin.RestEndpoints;
+import org.glassfish.api.admin.RuntimeType;
+import org.glassfish.config.support.CommandTarget;
+import org.glassfish.config.support.TargetType;
+import org.glassfish.hk2.api.PerLookup;
+import org.jvnet.hk2.annotations.Service;
 
-import fish.payara.internal.notification.PayaraNotifierConfiguration;
+import fish.payara.internal.notification.admin.BaseGetNotifierConfigurationCommand;
+import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 
-@Configured
-public interface ExampleNotifierConfiguration extends PayaraNotifierConfiguration {
-
-    @Attribute(defaultValue = "0", dataType = Integer.class)
-    String getTestValue();
-    void setTestValue(Integer value) throws PropertyVetoException;
+/**
+ * @author mertcaliskan
+ */
+@Service(name = "get-example-notifier-configuration")
+@PerLookup
+@CommandLock(CommandLock.LockType.NONE)
+@ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
+@TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
+@RestEndpoints({
+        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+                opType = RestEndpoint.OpType.GET,
+                path = "get-example-notifier-configuration",
+                description = "Lists Example Notifier Configuration")
+})
+public class GetExampleNotifierConfigurationCommand extends BaseGetNotifierConfigurationCommand<ExampleNotifierConfiguration> {
     
+    @Override
+    protected Map<String, Object> getNotifierConfiguration(ExampleNotifierConfiguration configuration) {
+        Map<String, Object> map = super.getNotifierConfiguration(configuration);
+
+        if (configuration != null) {
+            map.put("Test Value", configuration.getTestValue());
+        }
+
+        return map;
+    }
+
 }

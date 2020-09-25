@@ -37,29 +37,49 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extras.notifiers.example;
+package fish.payara.extensions.notifiers.example;
 
+import java.beans.PropertyVetoException;
+
+import org.glassfish.api.Param;
+import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.RestEndpoint;
+import org.glassfish.api.admin.RestEndpoints;
+import org.glassfish.api.admin.RuntimeType;
+import org.glassfish.config.support.CommandTarget;
+import org.glassfish.config.support.TargetType;
+import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
-import fish.payara.internal.notification.PayaraConfiguredNotifier;
-import fish.payara.internal.notification.PayaraNotification;
+import fish.payara.internal.notification.admin.BaseSetNotifierConfigurationCommand;
+import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 
-@Service(name = "example-notifier")
-public class ExampleNotifier extends PayaraConfiguredNotifier<ExampleNotifierConfiguration> {
+/**
+ * @author mertcaliskan
+ */
+@Service(name = "set-example-notifier-configuration")
+@PerLookup
+@CommandLock(CommandLock.LockType.NONE)
+@ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
+@TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
+@RestEndpoints({
+        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+                opType = RestEndpoint.OpType.POST,
+                path = "set-example-notifier-configuration",
+                description = "Configures Example Notification Service")
+})
+public class SetExampleNotifierConfigurationCommand extends BaseSetNotifierConfigurationCommand<ExampleNotifierConfiguration> {
+
+    @Param(name = "testValue", optional = true)
+    private Integer testValue;
 
     @Override
-    public void handleNotification(PayaraNotification event) {
-        System.out.println(configuration.getTestValue());
-    }
-
-    @Override
-    public void bootstrap() {
-        System.out.println("Bootstrapping custom notifier");
-    }
-
-    @Override
-    public void destroy() {
-        System.out.println("Destroying custom notifier");
+    protected void applyValues(ExampleNotifierConfiguration configuration) throws PropertyVetoException {
+        super.applyValues(configuration);
+        if (this.testValue != null) {
+            configuration.setTestValue(this.testValue);
+        }
     }
 
 }
