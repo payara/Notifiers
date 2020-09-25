@@ -56,6 +56,8 @@
     </properties>
 
     <modules>
+        <module>email-notifier-core</module>
+        <module>email-notifier-console-plugin</module>
         <module>example-notifier-core</module>
         <module>example-notifier-console-plugin</module>
         <module>discord-notifier-core</module>
