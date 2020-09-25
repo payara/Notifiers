@@ -60,6 +60,8 @@
         <module>example-notifier-console-plugin</module>
         <module>discord-notifier-core</module>
         <module>discord-notifier-console-plugin</module>
+        <module>newrelic-notifier-core</module>
+        <module>newrelic-notifier-console-plugin</module>
     </modules>
 
     <dependencyManagement>
