@@ -50,11 +50,16 @@
 
     <properties>
         <payara.version>5.2020.5</payara.version>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <modules>
         <module>example-notifier-core</module>
         <module>example-notifier-console-plugin</module>
+        <module>discord-notifier-core</module>
+        <module>discord-notifier-console-plugin</module>
     </modules>
 
     <dependencyManagement>
@@ -71,6 +76,19 @@
                 <groupId>fish.payara.server.internal.admingui</groupId>
                 <artifactId>console-plugin-service</artifactId>
                 <version>${payara.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <!-- Optional for other notifier functionality -->
+            <dependency>
+                <groupId>jakarta.platform</groupId>
+                <artifactId>jakarta.jakartaee-api</artifactId>
+                <version>8.0.0</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>2.10.2</version>
                 <optional>true</optional>
             </dependency>
         </dependencies>
