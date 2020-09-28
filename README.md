@@ -15,6 +15,8 @@ The second module integrates a notifier into the Administration Console. This mo
 
 To install a notifier to Payara Server Community Edition, build the relevant module and drop it into `${PAYARA_HOME}/glassfish/modules` and restart the server. If you have installed a notifier core module, you should find the related asadmin commands and parameters installed. If you have installed a console plugin, you should see a tab in the admin console under the notification service.
 
+Note that if the notifier has any extra dependencies not provided by Payara Server, the dependency JARs also need copying into the `modules` directory. You should find that the dependency is copied into the `target` directory by the `maven-dependency-plugin`. If you don't, make sure your `pom.xml` implements the `maven-dependency-plugin` with the parent pom configuration.
+
 ## Writing New Notifiers
 
 Custom notifiers can also be built to extend the functionality of the notification service. To implement a new notifier `core` and `console-plugin`, see the [example-notifier-core](./example-notifier-core) and [example-notifier-console-plugin](./example-notifier-console-plugin) modules respectively. You can copy these modules and refactor them to implement your own unique notifiers.
