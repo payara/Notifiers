@@ -60,6 +60,8 @@
         <module>example-notifier-console-plugin</module>
         <module>discord-notifier-core</module>
         <module>discord-notifier-console-plugin</module>
+        <module>xmpp-notifier-core</module>
+        <module>xmpp-notifier-console-plugin</module>
     </modules>
 
     <dependencyManagement>
@@ -221,6 +223,27 @@
                             </manifest>
                             <manifestFile>${project.build.directory}/classes/META-INF/MANIFEST.MF</manifestFile>
                         </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-dependency-plugin</artifactId>
+                    <version>3.1.2</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>copy-dependencies</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <excludeGroupIds>
+                            fish.payara.server.internal.common,
+                            fish.payara.server.internal.admingui,
+                            jakarta
+                        </excludeGroupIds>
+                        <excludeTransitive>true</excludeTransitive>
+                        <outputDirectory>${project.build.directory}</outputDirectory>
                     </configuration>
                 </plugin>
             </plugins>
