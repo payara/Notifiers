@@ -289,4 +289,12 @@
             <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
         </repository>
     </repositories>
+
+    <!-- Used for the deploy phase -->
+    <distributionManagement>
+        <repository>
+            <id>payara-nexus</id>
+            <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
+        </repository>
+    </distributionManagement>
 </project>
