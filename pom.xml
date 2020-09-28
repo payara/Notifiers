@@ -60,6 +60,8 @@
         <module>example-notifier-console-plugin</module>
         <module>discord-notifier-core</module>
         <module>discord-notifier-console-plugin</module>
+        <module>slack-notifier-core</module>
+        <module>slack-notifier-console-plugin</module>
     </modules>
 
     <dependencyManagement>
