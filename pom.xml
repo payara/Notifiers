@@ -58,6 +58,8 @@
     <modules>
         <module>example-notifier-core</module>
         <module>example-notifier-console-plugin</module>
+        <module>datadog-notifier-core</module>
+        <module>datadog-notifier-console-plugin</module>
         <module>discord-notifier-core</module>
         <module>discord-notifier-console-plugin</module>
     </modules>
