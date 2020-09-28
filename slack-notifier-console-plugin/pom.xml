@@ -48,6 +48,7 @@
     </parent>
 
     <artifactId>slack-notifier-console-plugin</artifactId>
+    <version>1.0</version>
     <packaging>glassfish-jar</packaging>
 
     <name>Slack Notifier Console Plugin</name>
