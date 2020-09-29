@@ -27,7 +27,7 @@ import org.jvnet.hk2.annotations.Service;
  * @author Jonathan Coustick
  */
 @Service
-public class EmailNotifierPlugin implements ConsoleProvider {
+public class TeamsNotifierPlugin implements ConsoleProvider {
     
     @Override
     public URL getConfiguration() {

@@ -43,8 +43,20 @@ import org.jvnet.hk2.annotations.Service;
 
 import fish.payara.internal.notification.PayaraConfiguredNotifier;
 import fish.payara.internal.notification.PayaraNotification;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Instant;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
+import javax.json.JsonReader;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -61,33 +73,116 @@ import javax.ws.rs.core.Response;
 public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfiguration> {
     
     private static final Logger LOGGER = Logger.getLogger(TeamsNotifier.class.getPackage().toString());
-    
-    Client client;
 
+    private static final String AZURE_LOGIN_ENDPOINT_BASE = "https://login.microsoftonline.com/";
+    private static final String AZURE_LOGIN_ENDPOINT_END = "/oauth2/v2.0/token";
+    private static final String GRANT_TYPE = "grant_type";
+    private static final String CLIENT_CREDENTIALS = "client_credentials";
+    private static final String SCOPE = "scope";
+    private static final String SCOPE_VALUE = "https://graph.microsoft.com/.default";
+    private static final String CLIENT_ID = "client_id";
+    private static final String CLIENT_SECRET = "client_secret";
+    
     private static final String TEAMS_BASE_ENDPOINT = "https://graph.microsoft.com/v1.0/teams/";
     private static final String CHANNELS = "/channels/";
     private static final String MESSAGES = "/messages";
     
     private static final String AUTHORIZATION = "Authorization";
-    private static final String BASIC = "Basic ";
+    private static final String BEARER = "Bearer ";
+    private static final String CONTENT_TYPE = "Content-Type";
+    private static final String POST = "POST";
+    
+    private String token;
+    private Instant expires;
     
     @Override
     public void handleNotification(PayaraNotification event) {
-        WebTarget target = client.target(TEAMS_BASE_ENDPOINT + configuration.getGroupID() + CHANNELS + configuration.getChannelID() + MESSAGES);
-        Builder targetBuilder = target.request(MediaType.APPLICATION_JSON);
-        targetBuilder.header(AUTHORIZATION, BASIC + configuration.getAuthorization());
-        Response response = targetBuilder.post(Entity.json(event.getData()));
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            LOGGER.log(Level.INFO, response.readEntity(String.class));
-        } else {
-            LOGGER.log(Level.SEVERE, response.readEntity(String.class));
-        }
+        
+        try {
+            URL url = new URL(TEAMS_BASE_ENDPOINT + configuration.getGroupID() + CHANNELS + configuration.getChannelID() + MESSAGES);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(POST);
+            connection.setRequestProperty(AUTHORIZATION, BEARER + token);
+            connection.setRequestProperty(CONTENT_TYPE, MediaType.APPLICATION_JSON);
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            
+            
+            try (OutputStream stream = connection.getOutputStream()) {
+                stream.write(messageBody(event));
+                stream.flush();
+            }
+            
+            int responseCode = connection.getResponseCode();
+            if (responseCode == Response.Status.OK.getStatusCode()) {
+                JsonReader reader = Json.createReader(connection.getInputStream());
+                JsonObject response = reader.readObject();
+                int expireSeconds = response.getInt("expires_in");
+                expires = Instant.now().plusSeconds(expireSeconds);
+                token = response.getString("acess_token");
+                LOGGER.log(Level.INFO, response.toString());
+            } else {
+                JsonReader reader = Json.createReader(connection.getErrorStream());
+                JsonObject response = reader.readObject();
+                LOGGER.log(Level.SEVERE, response.toString());
+            }
+            
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }    
+        
     }
 
     @Override
     public void bootstrap() {
         LOGGER.log(Level.SEVERE, "Bootstrapping teams notifier");
-        client = ClientBuilder.newClient();
+        try {
+            URL url = new URL(AZURE_LOGIN_ENDPOINT_BASE + configuration.getTenantID() + AZURE_LOGIN_ENDPOINT_END);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(POST);
+            connection.setRequestProperty(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            
+            try (OutputStream stream = connection.getOutputStream()) {
+                stream.write(requestTokenBytes());
+                stream.flush();
+            }
+            
+            int responseCode = connection.getResponseCode();
+            
+            if (responseCode == Response.Status.OK.getStatusCode()) {
+                JsonReader reader = Json.createReader(connection.getInputStream());
+                JsonObject response = reader.readObject();
+                int expireSeconds = response.getInt("expires_in");
+                expires = Instant.now().plusSeconds(expireSeconds);
+                token = response.getString("access_token");
+                LOGGER.log(Level.INFO, response.toString());
+            } else {
+                JsonReader reader = Json.createReader(connection.getErrorStream());
+                JsonObject response = reader.readObject();
+                LOGGER.log(Level.SEVERE, response.toString());
+            }
+            
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, null, ex);
+        }    
+        
+        
+    }
+    
+    private byte[] requestTokenBytes() {
+        String parameters = GRANT_TYPE + "=" + CLIENT_CREDENTIALS + "&" + SCOPE + "=" + SCOPE_VALUE + "&";
+        parameters += CLIENT_ID + "=" + configuration.getApplicationID() + "&" + CLIENT_SECRET + "=" + configuration.getApplicationSecret();
+        return parameters.getBytes();
+    }
+    
+    private byte[] messageBody(PayaraNotification event) {
+        JsonObjectBuilder contentBuilder = Json.createObjectBuilder();
+        contentBuilder.add("content", event.getMessage());
+        JsonObjectBuilder body = Json.createObjectBuilder();
+        body.add("body", contentBuilder);
+        return body.build().toString().getBytes();
     }
 
 }

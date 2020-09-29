@@ -72,26 +72,29 @@ import java.util.Base64;
 })
 public class SetTeamsNotifierConfigurationCommand extends BaseSetNotifierConfigurationCommand<TeamsNotifierConfiguration> {
 
-    @Param(name = "groupID")
+    @Param
+    private String tenantID;
+    
+    @Param
     private String groupID;
     
     @Param
-    private String channelID;
+    private String applicationID;
     
     @Param
-    private String username;
+    private String applicationSecret;
     
-    @Param(password = true)
-    private String teamsPassword;
+    @Param
+    private String channelID;
 
     @Override
     protected void applyValues(TeamsNotifierConfiguration configuration) throws PropertyVetoException {
         super.applyValues(configuration);
+        configuration.setTenantID(tenantID);
         configuration.setGroupID(groupID);
         configuration.setChannelID(channelID);
-        byte[] authBytes = (username + ":" + teamsPassword).getBytes();
-        String encodedString = Base64.getEncoder().encodeToString(authBytes);
-        configuration.setAuthorization(encodedString);
+        configuration.setApplicationID(applicationID);
+        configuration.setApplicationSecret(applicationSecret);
         
     }
 
