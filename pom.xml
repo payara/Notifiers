@@ -74,6 +74,8 @@
         <module>snmp-notifier-console-plugin</module>
         <module>xmpp-notifier-core</module>
         <module>xmpp-notifier-console-plugin</module>
+        <module>teams-notifier-core</module>
+        <module>teams-notifier-console-plugin</module>
     </modules>
 
     <dependencyManagement>
