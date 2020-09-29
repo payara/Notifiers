@@ -39,47 +39,43 @@
  */
 package fish.payara.extensions.notifiers.teams;
 
-import java.beans.PropertyVetoException;
-
-import org.glassfish.api.Param;
-import org.glassfish.api.admin.CommandLock;
-import org.glassfish.api.admin.ExecuteOn;
-import org.glassfish.api.admin.RestEndpoint;
-import org.glassfish.api.admin.RestEndpoints;
-import org.glassfish.api.admin.RuntimeType;
-import org.glassfish.config.support.CommandTarget;
-import org.glassfish.config.support.TargetType;
-import org.glassfish.hk2.api.PerLookup;
-import org.jvnet.hk2.annotations.Service;
-
-import fish.payara.internal.notification.admin.BaseSetNotifierConfigurationCommand;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
-import java.util.Base64;
+import fish.payara.internal.notification.PayaraNotification;
+import javax.json.bind.serializer.JsonbSerializer;
+import javax.json.bind.serializer.SerializationContext;
+import javax.json.stream.JsonGenerator;
 
 /**
+ * A custom serializer that determines what to write to the Microsoft Teams endpoint
+ * 
  * @author jonathan coustick
  */
-@Service(name = "set-teams-notifier-configuration")
-@PerLookup
-@CommandLock(CommandLock.LockType.NONE)
-@ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
-@TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
-@RestEndpoints({
-        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
-                opType = RestEndpoint.OpType.POST,
-                path = "set-teams-notifier-configuration",
-                description = "Configures Teams Notification Service")
-})
-public class SetTeamsNotifierConfigurationCommand extends BaseSetNotifierConfigurationCommand<TeamsNotifierConfiguration> {
-
-    @Param
-    private String webhookURL;
+public class TeamsSerializer implements JsonbSerializer<PayaraNotification> {
 
     @Override
-    protected void applyValues(TeamsNotifierConfiguration configuration) throws PropertyVetoException {
-        super.applyValues(configuration);
-        configuration.setWebhookUrl(webhookURL);
+    public void serialize(PayaraNotification event, JsonGenerator jg, SerializationContext sc) {
+        jg.write("@type", "MessageCard");
+        jg.write("@context", "http://schema.org/extensions");
+        jg.write("themeColor", "004462");
+        jg.write("summary", event.getEventType());
         
+        jg.writeStartArray("sections");
+        jg.writeStartObject();
+        
+        jg.writeStartArray("facts");
+        
+        jg.writeEnd();
+        jg.writeEnd();
+        
+        jg.write("host", event.getHostName());
+    }
+
+    private static String getDetailedSubject(PayaraNotification event) {
+        return String.format("%s. (host: %s, server: %s, domain: %s, instance: %s)", 
+                event.getSubject(),
+                event.getHostName(),
+                event.getServerName(),
+                event.getDomainName(),
+                event.getInstanceName());
     }
 
 }

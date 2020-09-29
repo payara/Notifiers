@@ -75,9 +75,7 @@ public class GetTeamsNotifierConfigurationCommand extends BaseGetNotifierConfigu
         Map<String, Object> map = super.getNotifierConfiguration(configuration);
 
         if (configuration != null) {
-            map.put("Tenant", configuration.getTenantID());
-            map.put("GroupID", configuration.getGroupID());
-            map.put("channelID", configuration.getChannelID());
+            map.put("Webhook URL", configuration.getWebhookUrl());;
         }
 
         return map;

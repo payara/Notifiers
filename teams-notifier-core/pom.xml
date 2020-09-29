@@ -67,5 +67,11 @@
             <artifactId>jakarta.json-api</artifactId>
             <version>1.1.6</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.json.bind</groupId>
+            <artifactId>jakarta.json.bind-api</artifactId>
+            <version>1.0.2</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
 </project>

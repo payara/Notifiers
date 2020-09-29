@@ -47,23 +47,27 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
-import java.time.Instant;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonReader;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.Invocation.Builder;
-import javax.ws.rs.client.WebTarget;
+import javax.json.bind.Jsonb;
+import javax.json.bind.JsonbBuilder;
+import javax.ws.rs.HttpMethod;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Notifier to integrate with Microsoft Teams
@@ -73,116 +77,110 @@ import javax.ws.rs.core.Response;
 public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfiguration> {
     
     private static final Logger LOGGER = Logger.getLogger(TeamsNotifier.class.getPackage().toString());
-
-    private static final String AZURE_LOGIN_ENDPOINT_BASE = "https://login.microsoftonline.com/";
-    private static final String AZURE_LOGIN_ENDPOINT_END = "/oauth2/v2.0/token";
-    private static final String GRANT_TYPE = "grant_type";
-    private static final String CLIENT_CREDENTIALS = "client_credentials";
-    private static final String SCOPE = "scope";
-    private static final String SCOPE_VALUE = "https://graph.microsoft.com/.default";
-    private static final String CLIENT_ID = "client_id";
-    private static final String CLIENT_SECRET = "client_secret";
+ 
+    private static final String USER_AGENT = "Payara-Teams-Notifier";
     
-    private static final String TEAMS_BASE_ENDPOINT = "https://graph.microsoft.com/v1.0/teams/";
-    private static final String CHANNELS = "/channels/";
-    private static final String MESSAGES = "/messages";
-    
-    private static final String AUTHORIZATION = "Authorization";
-    private static final String BEARER = "Bearer ";
-    private static final String CONTENT_TYPE = "Content-Type";
-    private static final String POST = "POST";
-    
-    private String token;
-    private Instant expires;
+    private Jsonb jsonb;
+    private URL url;
     
     @Override
     public void handleNotification(PayaraNotification event) {
-        
+        if (url == null) {
+            LOGGER.fine("Teams notifier received notification, but no URL was available.");
+            return;
+        }
+
         try {
-            URL url = new URL(TEAMS_BASE_ENDPOINT + configuration.getGroupID() + CHANNELS + configuration.getChannelID() + MESSAGES);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(POST);
-            connection.setRequestProperty(AUTHORIZATION, BEARER + token);
-            connection.setRequestProperty(CONTENT_TYPE, MediaType.APPLICATION_JSON);
             connection.setDoOutput(true);
-            connection.setDoInput(true);
+            connection.setRequestMethod(HttpMethod.POST);
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+            connection.addRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
             
             
-            try (OutputStream stream = connection.getOutputStream()) {
-                stream.write(messageBody(event));
-                stream.flush();
+            try (OutputStream outputStream = connection.getOutputStream()) {
+                outputStream.write(eventToCard(event));
+                outputStream.flush();
             }
+            connection.connect();
             
-            int responseCode = connection.getResponseCode();
-            if (responseCode == Response.Status.OK.getStatusCode()) {
-                JsonReader reader = Json.createReader(connection.getInputStream());
-                JsonObject response = reader.readObject();
-                int expireSeconds = response.getInt("expires_in");
-                expires = Instant.now().plusSeconds(expireSeconds);
-                token = response.getString("acess_token");
-                LOGGER.log(Level.INFO, response.toString());
+            if (connection.getResponseCode() == 200) {
+                LOGGER.log(Level.FINE, "Message sent successfully");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String response = reader.lines().collect(Collectors.joining("\n"));
+                LOGGER.log(Level.FINEST, response);
             } else {
-                JsonReader reader = Json.createReader(connection.getErrorStream());
-                JsonObject response = reader.readObject();
-                LOGGER.log(Level.SEVERE, response.toString());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                String response = reader.lines().collect(Collectors.joining("\n"));
+                LOGGER.log(Level.WARNING, response);
+                LOGGER.log(Level.SEVERE, "Error occurred while connecting to Microsoft Teams. Check your tokens. HTTP response code: {0}", connection.getResponseCode());
             }
-            
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }    
-        
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while accessing URL: " + url.toString(), e);
+        } catch (ProtocolException e) {
+            LOGGER.log(Level.SEVERE, "Specified URL is not accepting protocol defined: " + HttpMethod.POST, e);
+        } catch (UnknownHostException e) {
+            LOGGER.log(Level.SEVERE, "Check your network connection. Cannot access URL: " + url.toString(), e);
+        } catch (ConnectException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while connecting URL: " + url.toString(), e);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "IO Error while accessing URL: " + url.toString(), e);
+        }
     }
 
     @Override
     public void bootstrap() {
-        LOGGER.log(Level.SEVERE, "Bootstrapping teams notifier");
         try {
-            URL url = new URL(AZURE_LOGIN_ENDPOINT_BASE + configuration.getTenantID() + AZURE_LOGIN_ENDPOINT_END);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod(POST);
-            connection.setRequestProperty(CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED);
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
-            
-            try (OutputStream stream = connection.getOutputStream()) {
-                stream.write(requestTokenBytes());
-                stream.flush();
-            }
-            
-            int responseCode = connection.getResponseCode();
-            
-            if (responseCode == Response.Status.OK.getStatusCode()) {
-                JsonReader reader = Json.createReader(connection.getInputStream());
-                JsonObject response = reader.readObject();
-                int expireSeconds = response.getInt("expires_in");
-                expires = Instant.now().plusSeconds(expireSeconds);
-                token = response.getString("access_token");
-                LOGGER.log(Level.INFO, response.toString());
-            } else {
-                JsonReader reader = Json.createReader(connection.getErrorStream());
-                JsonObject response = reader.readObject();
-                LOGGER.log(Level.SEVERE, response.toString());
-            }
-            
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-        }    
-        
-        
+            this.url = new URL(configuration.getWebhookUrl());
+        } catch (MalformedURLException e) {
+            LOGGER.log(Level.SEVERE, "Error occurred while accessing URL: " + url, e);
+        }
+        jsonb = JsonbBuilder.create();
     }
     
-    private byte[] requestTokenBytes() {
-        String parameters = GRANT_TYPE + "=" + CLIENT_CREDENTIALS + "&" + SCOPE + "=" + SCOPE_VALUE + "&";
-        parameters += CLIENT_ID + "=" + configuration.getApplicationID() + "&" + CLIENT_SECRET + "=" + configuration.getApplicationSecret();
-        return parameters.getBytes();
-    }
-    
-    private byte[] messageBody(PayaraNotification event) {
-        JsonObjectBuilder contentBuilder = Json.createObjectBuilder();
-        contentBuilder.add("content", event.getMessage());
-        JsonObjectBuilder body = Json.createObjectBuilder();
-        body.add("body", contentBuilder);
-        return body.build().toString().getBytes();
+    private byte[] eventToCard(PayaraNotification event) {
+        JsonObjectBuilder mainBuilder = Json.createObjectBuilder();
+        
+        mainBuilder.add("@type", "MessageCard");
+        mainBuilder.add("@context", "http://schema.org/extensions");
+        mainBuilder.add("themeColor", "004462");
+        if (event.getEventType() != null) {
+            mainBuilder.add("summary", event.getEventType());
+        } else {
+            mainBuilder.add("summary", event.getSubject());
+        }
+        
+        JsonArrayBuilder sectionArray = Json.createArrayBuilder();
+        JsonObjectBuilder section = Json.createObjectBuilder();
+        section.add("activityTitle", event.getSubject());
+        
+        JsonArrayBuilder factsArray = Json.createArrayBuilder();
+        
+        JsonObjectBuilder domainObject = Json.createObjectBuilder();
+        domainObject.add("Domain", event.getDomainName());
+        factsArray.add(domainObject);
+        
+        JsonObjectBuilder hostObject = Json.createObjectBuilder();
+        hostObject.add("Host", event.getHostName());
+        factsArray.add(hostObject);
+        
+        JsonObjectBuilder instanceObject = Json.createObjectBuilder();
+        instanceObject.add("Instance", event.getInstanceName());
+        factsArray.add(instanceObject);
+        
+        JsonObjectBuilder subjectObject = Json.createObjectBuilder();
+        subjectObject.add("Message", event.getSubject());
+        factsArray.add(subjectObject);
+        
+        JsonObjectBuilder messageObject = Json.createObjectBuilder();
+        messageObject.add("Message", event.getMessage());
+        factsArray.add(messageObject);
+        
+        
+        section.add("facts", factsArray);
+        sectionArray.add(section);
+        mainBuilder.add("sections", sectionArray);
+        return mainBuilder.build().toString().getBytes();
     }
 
 }

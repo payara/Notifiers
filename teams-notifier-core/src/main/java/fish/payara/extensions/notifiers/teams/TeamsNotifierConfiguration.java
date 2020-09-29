@@ -50,23 +50,7 @@ import fish.payara.internal.notification.PayaraNotifierConfiguration;
 public interface TeamsNotifierConfiguration extends PayaraNotifierConfiguration {
     
     @Attribute
-    String getTenantID();
-    void setTenantID(String value) throws PropertyVetoException;
-    
-    @Attribute
-    String getApplicationID();
-    void setApplicationID(String value);
-    
-    @Attribute
-    String getApplicationSecret();
-    void setApplicationSecret(String value);
-
-    @Attribute
-    String getGroupID();
-    void setGroupID(String value) throws PropertyVetoException;
-    
-    @Attribute
-    String getChannelID();
-    void setChannelID(String value) throws PropertyVetoException;
+    String getWebhookUrl();
+    void setWebhookUrl(String value) throws PropertyVetoException;
     
 }
