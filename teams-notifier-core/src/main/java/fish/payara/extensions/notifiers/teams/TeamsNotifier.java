@@ -47,8 +47,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringReader;
-import java.math.BigDecimal;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -59,12 +57,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.json.Json;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
-import javax.json.bind.Jsonb;
-import javax.json.bind.JsonbBuilder;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -80,7 +73,6 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
  
     private static final String USER_AGENT = "Payara-Teams-Notifier";
     
-    private Jsonb jsonb;
     private URL url;
     
     @Override
@@ -135,7 +127,6 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
         } catch (MalformedURLException e) {
             LOGGER.log(Level.SEVERE, "Error occurred while accessing URL: " + url, e);
         }
-        jsonb = JsonbBuilder.create();
     }
     
     private byte[] eventToCard(PayaraNotification event) {
@@ -150,36 +141,13 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
             mainBuilder.add("summary", event.getSubject());
         }
         
-        JsonArrayBuilder sectionArray = Json.createArrayBuilder();
-        JsonObjectBuilder section = Json.createObjectBuilder();
-        section.add("activityTitle", event.getSubject());
-        
-        JsonArrayBuilder factsArray = Json.createArrayBuilder();
-        
-        JsonObjectBuilder domainObject = Json.createObjectBuilder();
-        domainObject.add("Domain", event.getDomainName());
-        factsArray.add(domainObject);
-        
-        JsonObjectBuilder hostObject = Json.createObjectBuilder();
-        hostObject.add("Host", event.getHostName());
-        factsArray.add(hostObject);
-        
-        JsonObjectBuilder instanceObject = Json.createObjectBuilder();
-        instanceObject.add("Instance", event.getInstanceName());
-        factsArray.add(instanceObject);
-        
-        JsonObjectBuilder subjectObject = Json.createObjectBuilder();
-        subjectObject.add("Message", event.getSubject());
-        factsArray.add(subjectObject);
-        
-        JsonObjectBuilder messageObject = Json.createObjectBuilder();
-        messageObject.add("Message", event.getMessage());
-        factsArray.add(messageObject);
-        
-        
-        section.add("facts", factsArray);
-        sectionArray.add(section);
-        mainBuilder.add("sections", sectionArray);
+        mainBuilder.add("text", String.format("%s. (host: %s, server: %s, domain: %s, instance: %s)\n%s", 
+                event.getSubject(),
+                event.getHostName(),
+                event.getServerName(),
+                event.getDomainName(),
+                event.getInstanceName(),
+                event.getMessage()));
         return mainBuilder.build().toString().getBytes();
     }
 

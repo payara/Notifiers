@@ -114,21 +114,13 @@ holder.
                           helpText="$resource{i18nn.notification.configuration.notifier.dynamicHelp}">
                 <sun:checkbox id="dynamic" selected="#{pageSession.dynamic}" selectedValue="true" />
             </sun:property>
-            <sun:property id="jndiNameProp" labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" 
-                          label="$resource{i18nemn.notifier.teams.configuration.jndiNameLabel}"  
-                          helpText="$resource{i18nemn.notifier.teams.configuration.jndiNameLabelHelpText}">
-                <sun:textField id="jndiNameField" columns="$int{75}" maxLength="255" 
-                               text="#{pageSession.valueMap['jndiName']}" styleClass="required"  
+            <sun:property id="webhookUrlProp" labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" 
+                          label="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabel}"  
+                          helpText="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabelHelpText}">
+                <sun:textField id="webhookUrlField" columns="$int{75}" maxLength="512" 
+                               text="#{pageSession.valueMap['webhookUrl']}" styleClass="required"  
                                required="#{true}"/>
             </sun:property>
-            <sun:property id="toProp" labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" 
-                          label="$resource{i18nemn.notifier.teams.configuration.toLabel}"  
-                          helpText="$resource{i18nemn.notifier.teams.configuration.toLabelHelpText}">
-                <sun:textField id="toNameField" columns="$int{75}" maxLength="255" 
-                               text="#{pageSession.valueMap['recipient']}" styleClass="required"  
-                               required="#{true}"/>
-            </sun:property>
-            
         </sun:propertySheetSection>
     </sun:propertySheet>
 </sun:form>
