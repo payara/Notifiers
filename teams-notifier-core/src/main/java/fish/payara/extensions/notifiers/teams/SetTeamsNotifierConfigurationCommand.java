@@ -54,9 +54,9 @@ import org.jvnet.hk2.annotations.Service;
 
 import fish.payara.internal.notification.admin.BaseSetNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
-import java.util.Base64;
 
 /**
+ * Command to set the configuration of Microsoft Teams notifier.
  * @author jonathan coustick
  */
 @Service(name = "set-teams-notifier-configuration")
@@ -72,7 +72,7 @@ import java.util.Base64;
 })
 public class SetTeamsNotifierConfigurationCommand extends BaseSetNotifierConfigurationCommand<TeamsNotifierConfiguration> {
 
-    @Param
+    @Param(primary = true)
     private String webhookURL;
 
     @Override

@@ -87,7 +87,7 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
             connection.setDoOutput(true);
             connection.setRequestMethod(HttpMethod.POST);
             connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-            connection.addRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
+            //connection.addRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
             
             
             try (OutputStream outputStream = connection.getOutputStream()) {
@@ -98,9 +98,11 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
             
             if (connection.getResponseCode() == 200) {
                 LOGGER.log(Level.FINE, "Message sent successfully");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String response = reader.lines().collect(Collectors.joining("\n"));
-                LOGGER.log(Level.FINEST, response);
+                if (LOGGER.isLoggable(Level.FINEST)) {
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    String response = reader.lines().collect(Collectors.joining("\n"));
+                    LOGGER.log(Level.FINEST, response);
+                }
             } else {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                 String response = reader.lines().collect(Collectors.joining("\n"));

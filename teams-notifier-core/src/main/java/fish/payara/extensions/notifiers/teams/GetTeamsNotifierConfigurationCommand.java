@@ -55,6 +55,7 @@ import fish.payara.internal.notification.admin.BaseGetNotifierConfigurationComma
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 
 /**
+ * Gets the configuration of the Microsoft Teams notifier
  * @author jonathan coustick
  */
 @Service(name = "get-teams-notifier-configuration")
