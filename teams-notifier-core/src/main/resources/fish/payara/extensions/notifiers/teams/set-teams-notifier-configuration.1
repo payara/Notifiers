@@ -1,0 +1,44 @@
+set-teams-notifier-configuration(1)        Payara Notificaton Service Extension       set-teams-notifier-configuration(1)
+
+NAME
+       set-teams-notifier-configuration - set the configuration of the Teams notifier
+
+SYNOPSIS
+           set-teams-notifier-configuration [--help]
+           [--enabled={true|false}] [--dynamic={true|false}]
+           [webhookUrl]
+           
+
+DESCRIPTION
+       The set-teams-notifier-configuration subcommand sets the configuration
+       of the Microsoft Teams notifier.
+
+OPTIONS
+       --help, -?
+           Displays the help text for the subcommand.
+
+EXAMPLES
+       Example 1, Setting the configuration
+           This example sets configuration for the notifier
+           to be enabled dynamically
+
+               asadmin> set-teams-notifier-configuration --enabled true --dynamic true https://outlook.office.com/webhook/12345@67890/IncomingWebHook/98765/4321
+               
+
+               Command set-teams-notifier-configuration executed successfully.
+
+EXIT STATUS
+       0
+           subcommand executed successfully
+
+       1
+           error in executing the subcommand
+
+SEE ALSO
+       list-commands(1), list-components(1), list-modules(1)
+
+       asadmin(1M)
+
+Jakarta EE 8                         1 Oct 2020                set-teams-notifier-configuration(1)
+
+

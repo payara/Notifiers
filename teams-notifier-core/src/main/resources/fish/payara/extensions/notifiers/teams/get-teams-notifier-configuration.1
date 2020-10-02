@@ -1,0 +1,40 @@
+get-teams-notifier-configuration(1)        Payara Notificaton Service Extension       get-teams-notifier-configuration(1)
+
+NAME
+       get-teams-notifier-configuration - get the configuration of the Teams notifier
+
+SYNOPSIS
+           get-teams-notifier-configuration [--help]
+
+DESCRIPTION
+       The get-teams-notifier-configuration subcommand displays the configuration
+       of the Microsoft Teams notifier.
+
+OPTIONS
+       --help, -?
+           Displays the help text for the subcommand.
+
+EXAMPLES
+       Example 1, Listing the configuration
+           This example lists the current configuration for the notifier.
+
+               asadmin> get-teams-notifier-configuration
+               Enabled  Noisy   Webhook URL
+               true     true    https://outlook.office.com/webhook/12345@67890/IncomingWebHook/98765/4321
+
+               Command get-teams-notifier-configuration executed successfully.
+
+EXIT STATUS
+       0
+           subcommand executed successfully
+
+       1
+           error in executing the subcommand
+
+SEE ALSO
+       list-commands(1), list-components(1), list-modules(1)
+
+       asadmin(1M)
+
+Jakarta EE 8                         1 Oct 2020                get-teams-notifier-configuration(1)
+
