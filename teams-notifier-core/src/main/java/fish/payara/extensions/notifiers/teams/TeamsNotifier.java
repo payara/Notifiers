@@ -70,9 +70,7 @@ import javax.ws.rs.core.MediaType;
 public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfiguration> {
     
     private static final Logger LOGGER = Logger.getLogger(TeamsNotifier.class.getPackage().toString());
- 
-    private static final String USER_AGENT = "Payara-Teams-Notifier";
-    
+
     private URL url;
     
     @Override
@@ -87,14 +85,12 @@ public class TeamsNotifier extends PayaraConfiguredNotifier<TeamsNotifierConfigu
             connection.setDoOutput(true);
             connection.setRequestMethod(HttpMethod.POST);
             connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-            //connection.addRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
             
-            
+            connection.connect();
             try (OutputStream outputStream = connection.getOutputStream()) {
                 outputStream.write(eventToCard(event));
                 outputStream.flush();
             }
-            connection.connect();
             
             if (connection.getResponseCode() == 200) {
                 LOGGER.log(Level.FINE, "Message sent successfully");
