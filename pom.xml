@@ -218,7 +218,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.2.0</version>
                     <executions>
                         <execution>
                             <id>default-jar</id>
@@ -299,4 +299,85 @@
             <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
         </repository>
     </distributionManagement>
+
+
+    <profiles>
+        <profile>
+            <id>BuildEnterpriseNotifiers</id>
+            <properties>
+                <payara.version>5.25.0-SNAPSHOT</payara.version>
+            </properties>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-jar-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>default-jar</id>
+                                    <configuration>
+                                        <classifier>enterprise</classifier>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-install-plugin</artifactId>
+                            <version>3.0.0-M1</version>
+                            <executions>
+                                <execution>
+                                    <id>default-install</id>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>install</goal>
+                                    </goals>
+                                    <configuration>
+                                        <skip>true</skip>
+                                    </configuration>
+                                </execution>
+                                <execution>
+                                    <id>enterprise-install</id>
+                                    <phase>install</phase>
+                                    <goals>
+                                        <goal>install-file</goal>
+                                    </goals>
+                                    <configuration>
+                                        <file>${project.build.directory}${file.separator}${project.artifactId}-${project.version}-enterprise.jar</file>
+                                        <classifier>enterprise</classifier>
+                                        <pomFile>pom.xml</pomFile>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-install-plugin</artifactId>
+                        <version>3.0.0-M1</version>
+                        <executions>
+                            <execution>
+                                <id>enterprise-install</id>
+                                <inherited>false</inherited>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>install-file</goal>
+                                </goals>
+                                <configuration>
+                                    <file>pom.xml</file>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>${project.artifactId}</artifactId>
+                                    <version>${project.version}</version>
+                                    <packaging>${project.packaging}</packaging>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
