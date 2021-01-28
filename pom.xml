@@ -363,21 +363,22 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-install-plugin</artifactId>
+                        <inherited>false</inherited>
                         <executions>
                             <execution>
-                                <id>enterprise-install</id>
-                                <inherited>false</inherited>
+                                <id>default-install</id>
                                 <phase>install</phase>
                                 <goals>
-                                    <goal>install-file</goal>
+                                    <goal>install</goal>
                                 </goals>
                                 <configuration>
-                                    <file>pom.xml</file>
-                                    <groupId>${project.groupId}</groupId>
-                                    <artifactId>${project.artifactId}</artifactId>
-                                    <version>${project.version}</version>
-                                    <packaging>${project.packaging}</packaging>
+                                    <skip>false</skip>
                                 </configuration>
+                            </execution>
+                            <execution>
+                                <id>enterprise-install</id>
+                                <phase>none</phase>
+                                <inherited>false</inherited>
                             </execution>
                         </executions>
                     </plugin>
