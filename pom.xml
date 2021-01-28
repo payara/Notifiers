@@ -60,22 +60,28 @@
     <modules>
         <module>email-notifier-core</module>
         <module>email-notifier-console-plugin</module>
+        <module>email-notifier-console-plugin-l10n</module>
         <module>example-notifier-core</module>
         <module>example-notifier-console-plugin</module>
         <module>datadog-notifier-core</module>
         <module>datadog-notifier-console-plugin</module>
+        <module>datadog-notifier-console-plugin-l10n</module>
         <module>discord-notifier-core</module>
         <module>discord-notifier-console-plugin</module>
         <module>newrelic-notifier-core</module>
         <module>newrelic-notifier-console-plugin</module>
+        <module>newrelic-notifier-console-plugin-l10n</module>
         <module>slack-notifier-core</module>
         <module>slack-notifier-console-plugin</module>
+        <module>slack-notifier-console-plugin-l10n</module>
         <module>snmp-notifier-core</module>
         <module>snmp-notifier-console-plugin</module>
+        <module>snmp-notifier-console-plugin-l10n</module>
         <module>teams-notifier-core</module>
         <module>teams-notifier-console-plugin</module>
         <module>xmpp-notifier-core</module>
         <module>xmpp-notifier-console-plugin</module>
+        <module>xmpp-notifier-console-plugin-l10n</module>
     </modules>
 
     <dependencyManagement>
