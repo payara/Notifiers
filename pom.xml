@@ -2,7 +2,7 @@
 <!--
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-  Copyright (c) [2020] Payara Foundation and/or its affiliates. All rights reserved.
+  Copyright (c) 2020-2021 Payara Foundation and/or its affiliates. All rights reserved.
 
   The contents of this file are subject to the terms of either the GNU
   General Public License Version 2 only ("GPL") or the Common Development
@@ -305,7 +305,7 @@
         <profile>
             <id>BuildEnterpriseNotifiers</id>
             <properties>
-                <payara.version>5.25.0-SNAPSHOT</payara.version>
+                <payara.version>5.25.0</payara.version>
             </properties>
 
             <build>
@@ -357,7 +357,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-install-plugin</artifactId>
-                        <version>3.0.0-M1</version>
                         <executions>
                             <execution>
                                 <id>enterprise-install</id>
