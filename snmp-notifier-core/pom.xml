@@ -44,11 +44,11 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.0.1</version>
     </parent>
 
     <artifactId>snmp-notifier-core</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <packaging>glassfish-jar</packaging>
 
     <name>SNMP Notifier Implementation</name>
