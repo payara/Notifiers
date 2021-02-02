@@ -82,6 +82,7 @@
         <module>xmpp-notifier-core</module>
         <module>xmpp-notifier-console-plugin</module>
         <module>xmpp-notifier-console-plugin-l10n</module>
+        <module>enterprise-backwards-compatibility</module>
     </modules>
 
     <dependencyManagement>
@@ -311,7 +312,7 @@
         <profile>
             <id>BuildEnterpriseNotifiers</id>
             <properties>
-                <payara.version>5.25.0</payara.version>
+                <payara.version>5.25.0-SNAPSHOT</payara.version>
             </properties>
 
             <build>
@@ -384,6 +385,10 @@
                     </plugin>
                 </plugins>
             </build>
+
+            <modules>
+                <module>enterprise-backwards-compatibility</module>
+            </modules>
         </profile>
     </profiles>
 </project>
