@@ -39,7 +39,6 @@
  */
 package fish.payara.extensions.notifiers.email;
 
-
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
@@ -54,7 +53,7 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.email.SetEmailNotifierConfigurationCommand}
+ * Deprecated, folded into {@link SetEmailNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

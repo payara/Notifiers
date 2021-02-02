@@ -39,7 +39,6 @@
  */
 package fish.payara.extensions.notifiers.email;
 
-
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;

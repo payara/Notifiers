@@ -57,21 +57,21 @@ import org.jvnet.hk2.annotations.Service;
  * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "healthcheck-jms-notifier-configure")
+@Service(name = "healthcheck-log-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
         @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "healthcheck-jms-notifier-configure",
-                description = "Configures JMS Notifier for HealthCheck Service")
+                path = "healthcheck-log-notifier-configure",
+                description = "Configures Log Notifier for HealthCheck Service")
 })
 public class LogHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(AdminCommandContext context) {
-        configureNotifier(context, "set-jms-notifier-configuration");
-        configureService(context, "set-healthcheck-configuration", "jms-notifier");
+        configureNotifier(context, "set-log-notifier-configuration");
+        configureService(context, "set-healthcheck-configuration", "log-notifier");
     }
 }

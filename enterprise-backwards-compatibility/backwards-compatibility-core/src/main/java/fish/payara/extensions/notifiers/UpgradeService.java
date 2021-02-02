@@ -45,9 +45,11 @@ import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import org.glassfish.api.admin.config.ConfigurationUpgrade;
 import org.glassfish.hk2.api.PostConstruct;
+import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
 
+@Service
 public class UpgradeService implements ConfigurationUpgrade, PostConstruct {
 
     @Inject
