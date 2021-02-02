@@ -37,7 +37,8 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.email;
+package fish.payara.extensions.notifiers.log.compat;
+
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
@@ -56,21 +57,21 @@ import org.jvnet.hk2.annotations.Service;
  * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "healthcheck-email-notifier-configure")
+@Service(name = "healthcheck-log-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
         @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "healthcheck-email-notifier-configure",
-                description = "Configures Email Notifier for HealthCheck Service")
+                path = "healthcheck-log-notifier-configure",
+                description = "Configures Log Notifier for HealthCheck Service")
 })
-public class EmailHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class LogHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(AdminCommandContext context) {
-        configureNotifier(context, "set-email-notifier-configuration");
-        configureService(context, "set-healthcheck-configuration", "email-notifier");
+        configureNotifier(context, "set-log-notifier-configuration");
+        configureService(context, "set-healthcheck-configuration", "log-notifier");
     }
 }

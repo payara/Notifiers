@@ -37,10 +37,11 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.email;
+package fish.payara.extensions.notifiers.jms.compat;
+
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
+import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.RestEndpoint;
@@ -52,28 +53,25 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Asadmin command to configure the Email notifier with the monitoring service.
- * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
- * @since 4.1.2.174
- * @author jonathan coustick
+ * @author mertcaliskan
+ * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "monitoring-email-notifier-configure")
+@Service(name = "healthcheck-jms-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
+        @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "monitoring-email-notifier-configure",
-                description = "Configures Email Notifier for Monitoring Service")
+                path = "healthcheck-jms-notifier-configure",
+                description = "Configures JMS Notifier for HealthCheck Service")
 })
-public class EmailMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class JmsHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
-    public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-email-notifier-configuration");
-        configureService(context, "set-jmx-monitoring-configuration", "email-notifier");
+    public void execute(AdminCommandContext context) {
+        configureNotifier(context, "set-jms-notifier-configuration");
+        configureService(context, "set-healthcheck-configuration", "jms-notifier");
     }
-
 }

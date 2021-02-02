@@ -37,7 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.newrelic;
+package fish.payara.extensions.notifiers.newrelic.compat;
 
 
 import com.sun.enterprise.util.StringUtils;

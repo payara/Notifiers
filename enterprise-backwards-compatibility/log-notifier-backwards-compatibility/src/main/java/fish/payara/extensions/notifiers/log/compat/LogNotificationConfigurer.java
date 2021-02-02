@@ -37,41 +37,89 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.snmp;
+package fish.payara.extensions.notifiers.log.compat;
 
 
+import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
+import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import org.glassfish.api.ActionReport;
+import org.glassfish.api.Param;
 import org.glassfish.api.admin.AdminCommandContext;
+import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
 
+import java.util.logging.Level;
+
 /**
+ * Deprecated, folded into {@link fish.payara.nucleus.notification.log.SetLogNotifierConfiguration}
  * @author mertcaliskan
- * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "healthcheck-snmp-notifier-configure")
+@Service(name = "notification-log-configure")
 @PerLookup
+@CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
+        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "healthcheck-snmp-notifier-configure",
-                description = "Configures SNMP Notifier for HealthCheck Service")
+                path = "notification-log-configure",
+                description = "Configures Log Notification Service")
 })
-public class SnmpHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class LogNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
+
+    @Param(name = "useSeparateLogFile", defaultValue = "false", optional = true)
+    private String useSeparateLogFile;
 
     @Override
-    public void execute(AdminCommandContext context) {
-        configureNotifier(context, "set-snmp-notifier-configuration");
-        configureService(context, "set-healthcheck-configuration", "snmp-notifier");
+    public void execute(final AdminCommandContext context) {
+        configureNotifier(context, "set-log-notifier-configuration");
     }
+
+    @Override
+    protected void configureNotifier(AdminCommandContext context, String commandName) {
+        ParameterMap parameterMap = new ParameterMap();
+
+        if (enabled != null) {
+            parameterMap.insert("enabled", enabled.toString());
+        }
+
+        if (dynamic != null) {
+            parameterMap.insert("dynamic", dynamic.toString());
+        }
+
+        if (StringUtils.ok(target)) {
+            parameterMap.insert("target", target);
+        }
+
+        if (noisy != null) {
+            parameterMap.insert("noisy", noisy.toString());
+        }
+
+        if (StringUtils.ok(useSeparateLogFile)) {
+            parameterMap.insert("useSeparateLogFile", useSeparateLogFile);
+        }
+
+        try {
+            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
+                    .getCommandInvocation(commandName,
+                            context.getActionReport().addSubActionsReport(), context.getSubject())
+                    .parameters(parameterMap).execute();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
+        }
+    }
+
 }

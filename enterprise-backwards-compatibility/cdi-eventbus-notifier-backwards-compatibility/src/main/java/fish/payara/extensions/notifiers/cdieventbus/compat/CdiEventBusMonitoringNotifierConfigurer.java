@@ -37,103 +37,44 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.slack;
+package fish.payara.extensions.notifiers.cdieventbus.compat;
 
 
-import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
-import org.glassfish.api.ActionReport;
-import org.glassfish.api.Param;
+import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
-import org.glassfish.api.admin.CommandLock;
-import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
-import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
-import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
 
-import java.util.logging.Level;
-
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.slack.SetSlackNotifierConfigurationCommand}
- * @author mertcaliskan
+ * Asadmin command to configure the CDI Event Bus notifier with the monitoring service.
+ * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
+ * @since 4.1.2.174
+ * @author jonathan coustick
  */
 @Deprecated
-@Service(name = "notification-slack-configure")
+@Service(name = "monitoring-cdieventbus-notifier-configure")
 @PerLookup
-@CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+        @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "notification-slack-configure",
-                description = "Configures Slack Notification Service")
+                path = "monitoring-cdieventbus-notifier-configure",
+                description = "Configures CDI Event Bus Notifier for Monitoring Service")
 })
-public class SlackNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
-
-    @Param(name = "token1")
-    private String token1;
-
-    @Param(name = "token2")
-    private String token2;
-
-    @Param(name = "token3")
-    private String token3;
+public class CdiEventBusMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-slack-notifier-configuration");
-    }
-
-    @Override
-    protected void configureNotifier(AdminCommandContext context, String commandName) {
-        ParameterMap parameterMap = new ParameterMap();
-
-        if (enabled != null) {
-            parameterMap.insert("enabled", enabled.toString());
-        }
-
-        if (dynamic != null) {
-            parameterMap.insert("dynamic", dynamic.toString());
-        }
-
-        if (StringUtils.ok(target)) {
-            parameterMap.insert("target", target);
-        }
-
-        if (noisy != null) {
-            parameterMap.insert("noisy", noisy.toString());
-        }
-
-        if (StringUtils.ok(token1)) {
-            parameterMap.insert("token1", token1);
-        }
-
-        if (StringUtils.ok(token2)) {
-            parameterMap.insert("token2", token2);
-        }
-
-        if (StringUtils.ok(token3)) {
-            parameterMap.insert("token3", token3);
-        }
-
-        try {
-            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
-                    .getCommandInvocation(commandName,
-                            context.getActionReport().addSubActionsReport(), context.getSubject())
-                    .parameters(parameterMap).execute();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, exception.getMessage());
-            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
-        }
+        configureNotifier(context, "set-cdieventbus-notifier-configuration");
+        configureService(context, "set-jmx-monitoring-configuration", "cdieventbus-notifier");
     }
 
 }

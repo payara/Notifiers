@@ -37,11 +37,11 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.newrelic;
+package fish.payara.extensions.notifiers.slack.compat;
 
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
+import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.RestEndpoint;
@@ -53,25 +53,28 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * @author mertcaliskan
- * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
+ * Asadmin command to configure the Slack notifier with the monitoring service.
+ * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
+ * @since 4.1.2.174
+ * @author jonathan coustick
  */
 @Deprecated
-@Service(name = "healthcheck--newrelic-notifier-configure")
+@Service(name = "monitoring-slack-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
+        @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "healthcheck-newrelic-notifier-configure",
-                description = "Configures New Relic Notifier for HealthCheck Service")
+                path = "monitoring-slack-notifier-configure",
+                description = "Configures Slack Notifier for Monitoring Service")
 })
-public class NewRelicHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class SlackMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
-    public void execute(AdminCommandContext context) {
-        configureNotifier(context, "set-newrelic-notifier-configuration");
-        configureService(context, "set-healthcheck-configuration", "newrelic-notifier");
+    public void execute(final AdminCommandContext context) {
+        configureNotifier(context, "set-slack-notifier-configuration");
+        configureService(context, "set-jmx-monitoring-configuration", "slack-notifier");
     }
+
 }

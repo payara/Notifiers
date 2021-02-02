@@ -37,12 +37,12 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.email;
+package fish.payara.extensions.notifiers.snmp.compat;
+
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
-import org.glassfish.api.admin.CommandLock;
 import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
@@ -53,26 +53,28 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Deprecated, folded into {@link SetEmailNotifierConfigurationCommand}
- * @author mertcaliskan
+ * Asadmin command to configure the SNMP notifier with the monitoring service.
+ * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
+ * @since 4.1.2.174
+ * @author jonathan coustick
  */
 @Deprecated
-@Service(name = "notification-email-configure")
+@Service(name = "monitoring-snmp-notifier-configure")
 @PerLookup
-@CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+        @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "notification-email-configure",
-                description = "Configures Email Notification Service")
+                path = "monitoring-snmp-notifier-configure",
+                description = "Configures SNMP Notifier for Monitoring Service")
 })
-public class EmailNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
+public class SnmpMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-email-notifier-configuration");
+        configureNotifier(context, "set-snmp-notifier-configuration");
+        configureService(context, "set-jmx-monitoring-configuration", "snmp-notifier");
     }
 
 }

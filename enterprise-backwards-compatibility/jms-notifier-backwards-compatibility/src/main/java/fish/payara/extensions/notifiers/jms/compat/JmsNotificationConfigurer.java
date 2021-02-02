@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2021 Payara Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2017-2021 Payara Foundation and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -37,40 +37,72 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
+package fish.payara.extensions.notifiers.jms.compat;
 
-package fish.payara.extensions.notifiers;
 
 import com.sun.enterprise.util.StringUtils;
-import com.sun.enterprise.util.SystemPropertyConstants;
+import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.ActionReport;
 import org.glassfish.api.Param;
-import org.glassfish.api.admin.AdminCommand;
 import org.glassfish.api.admin.AdminCommandContext;
+import org.glassfish.api.admin.CommandLock;
 import org.glassfish.api.admin.CommandRunner;
+import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.ParameterMap;
+import org.glassfish.api.admin.RestEndpoint;
+import org.glassfish.api.admin.RestEndpoints;
+import org.glassfish.api.admin.RuntimeType;
+import org.glassfish.config.support.CommandTarget;
+import org.glassfish.config.support.TargetType;
+import org.glassfish.hk2.api.PerLookup;
 import org.glassfish.internal.api.Globals;
+import org.jvnet.hk2.annotations.Service;
 
-import javax.inject.Inject;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public abstract class BaseSetNotifierConfigurationCommand implements AdminCommand {
+/**
+ * Deprecated, folded into {@link fish.payara.notification.jms.SetJmsNotifierConfigurationCommand}
+ * @author mertcaliskan
+ */
+@Deprecated
+@Service(name = "notification-jms-configure")
+@PerLookup
+@CommandLock(CommandLock.LockType.NONE)
+@ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
+@TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
+@RestEndpoints({
+        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+                opType = RestEndpoint.OpType.POST,
+                path = "notification-jms-configure",
+                description = "Configures JMS Notification Service")
+})
+public class JmsNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
-    @Param(name = "target", optional = true, defaultValue = SystemPropertyConstants.DAS_SERVER_NAME)
-    protected String target;
+    @Param(name = "contextFactoryClass")
+    private String contextFactoryClass;
 
-    @Param(name = "dynamic", optional = true, defaultValue = "false")
-    protected Boolean dynamic;
+    @Param(name = "connectionFactoryName")
+    private String connectionFactoryName;
 
-    @Param(name = "enabled")
-    protected Boolean enabled;
+    @Param(name = "queueName")
+    private String queueName;
 
-    @Param(name = "noisy", optional = true, defaultValue = "true")
-    protected Boolean noisy;
+    @Param(name = "url")
+    private String url;
 
-    @Inject
-    protected Logger logger;
+    @Param(name = "username", optional = true)
+    private String username;
 
+    @Param(name = "password", optional = true)
+    private String password;
+
+    @Override
+    public void execute(final AdminCommandContext context) {
+        configureNotifier(context, "set-jms-notifier-configuration");
+    }
+
+    @Override
     protected void configureNotifier(AdminCommandContext context, String commandName) {
         ParameterMap parameterMap = new ParameterMap();
 
@@ -90,34 +122,28 @@ public abstract class BaseSetNotifierConfigurationCommand implements AdminComman
             parameterMap.insert("noisy", noisy.toString());
         }
 
-        try {
-            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
-                    .getCommandInvocation(commandName,
-                            context.getActionReport().addSubActionsReport(), context.getSubject())
-                    .parameters(parameterMap).execute();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, exception.getMessage());
-            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
-        }
-    }
-
-    protected void configureService(AdminCommandContext context, String commandName, String notifierName) {
-        ParameterMap parameterMap = new ParameterMap();
-
-        if (enabled != null) {
-            if (enabled) {
-                parameterMap.insert("enableNotifiers", notifierName);
-            } else {
-                parameterMap.insert("disableNotifiers", notifierName);
-            }
+        if (StringUtils.ok(contextFactoryClass)) {
+            parameterMap.insert("contextFactoryClass", contextFactoryClass);
         }
 
-        if (dynamic != null) {
-            parameterMap.insert("dynamic", dynamic.toString());
+        if (StringUtils.ok(connectionFactoryName)) {
+            parameterMap.insert("connectionFactoryName", connectionFactoryName);
         }
 
-        if (target != null) {
-            parameterMap.insert("target", target);
+        if (StringUtils.ok(queueName)) {
+            parameterMap.insert("queueName", queueName);
+        }
+
+        if (StringUtils.ok(url)) {
+            parameterMap.insert("url", url);
+        }
+
+        if (StringUtils.ok(username)) {
+            parameterMap.insert("username", username);
+        }
+
+        if (StringUtils.ok(password)) {
+            parameterMap.insert("password", password);
         }
 
         try {

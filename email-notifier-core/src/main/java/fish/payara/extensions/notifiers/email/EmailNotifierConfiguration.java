@@ -58,8 +58,4 @@ public interface EmailNotifierConfiguration extends PayaraNotifierConfiguration 
     String getRecipient();
     void setRecipient(String value) throws PropertyVetoException;
 
-    @Deprecated
-    @Attribute
-    String getTo();
-    void setTo(String value) throws PropertyVetoException;
 }

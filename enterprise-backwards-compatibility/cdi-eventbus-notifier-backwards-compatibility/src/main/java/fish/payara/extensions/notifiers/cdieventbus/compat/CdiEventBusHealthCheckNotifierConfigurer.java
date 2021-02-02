@@ -37,11 +37,11 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.slack;
+package fish.payara.extensions.notifiers.cdieventbus.compat;
 
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
+import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.RestEndpoint;
@@ -53,28 +53,25 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Asadmin command to configure the Slack notifier with the monitoring service.
- * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
- * @since 4.1.2.174
- * @author jonathan coustick
+ * @author mertcaliskan
+ * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "monitoring-slack-notifier-configure")
+@Service(name = "healthcheck-cdieventbus-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
+        @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "monitoring-slack-notifier-configure",
-                description = "Configures Slack Notifier for Monitoring Service")
+                path = "healthcheck-cdieventbus-notifier-configure",
+                description = "Configures CDI Event Bus Notifier for HealthCheck Service")
 })
-public class SlackMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class CdiEventBusHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
-    public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-slack-notifier-configuration");
-        configureService(context, "set-jmx-monitoring-configuration", "slack-notifier");
+    public void execute(AdminCommandContext context) {
+        configureNotifier(context, "set-cdieventbus-notifier-configuration");
+        configureService(context, "set-healthcheck-configuration", "cdieventbus-notifier");
     }
-
 }

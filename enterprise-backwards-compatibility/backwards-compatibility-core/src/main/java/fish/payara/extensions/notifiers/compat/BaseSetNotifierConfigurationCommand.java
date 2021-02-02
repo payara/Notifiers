@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) 2017-2021 Payara Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) 2021 Payara Foundation and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -37,67 +37,39 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.snmp;
 
+package fish.payara.extensions.notifiers.compat;
 
 import com.sun.enterprise.util.StringUtils;
-import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import com.sun.enterprise.util.SystemPropertyConstants;
 import org.glassfish.api.ActionReport;
 import org.glassfish.api.Param;
+import org.glassfish.api.admin.AdminCommand;
 import org.glassfish.api.admin.AdminCommandContext;
-import org.glassfish.api.admin.CommandLock;
 import org.glassfish.api.admin.CommandRunner;
-import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.ParameterMap;
-import org.glassfish.api.admin.RestEndpoint;
-import org.glassfish.api.admin.RestEndpoints;
-import org.glassfish.api.admin.RuntimeType;
-import org.glassfish.config.support.CommandTarget;
-import org.glassfish.config.support.TargetType;
-import org.glassfish.hk2.api.PerLookup;
 import org.glassfish.internal.api.Globals;
-import org.jvnet.hk2.annotations.Service;
 
+import javax.inject.Inject;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.snmp.SetSnmpNotifierConfigurationCommand}
- * @author mertcaliskan
- */
-@Deprecated
-@Service(name = "notification-snmp-configure")
-@PerLookup
-@CommandLock(CommandLock.LockType.NONE)
-@ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
-@TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
-@RestEndpoints({
-        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
-                opType = RestEndpoint.OpType.POST,
-                path = "notification-snmp-configure",
-                description = "Configures SNMP Notification Service")
-})
-public class SnmpNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
+public abstract class BaseSetNotifierConfigurationCommand implements AdminCommand {
 
-    @Param(name = "community", defaultValue = "public", optional = true)
-    private String community;
+    @Param(name = "target", optional = true, defaultValue = SystemPropertyConstants.DAS_SERVER_NAME)
+    protected String target;
 
-    @Param(name = "oid", defaultValue = ".1.3.6.1.2.1.1.8", optional = true)
-    private String oid;
+    @Param(name = "dynamic", optional = true, defaultValue = "false")
+    protected Boolean dynamic;
 
-    @Param(name = "version", defaultValue = "v2c", optional = true, acceptableValues = "v1,v2c")
-    private String version;
+    @Param(name = "enabled")
+    protected Boolean enabled;
 
-    @Param(name = "hostName")
-    private String hostName;
+    @Param(name = "noisy", optional = true, defaultValue = "true")
+    protected Boolean noisy;
 
-    @Param(name = "port", defaultValue = "162", optional = true)
-    private Integer port;
-
-    @Override
-    public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-snmp-notifier-configuration");
-    }
+    @Inject
+    protected Logger logger;
 
     protected void configureNotifier(AdminCommandContext context, String commandName) {
         ParameterMap parameterMap = new ParameterMap();
@@ -118,24 +90,34 @@ public class SnmpNotificationConfigurer extends BaseSetNotifierConfigurationComm
             parameterMap.insert("noisy", noisy.toString());
         }
 
-        if (StringUtils.ok(community)) {
-            parameterMap.insert("community", community);
+        try {
+            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
+                    .getCommandInvocation(commandName,
+                            context.getActionReport().addSubActionsReport(), context.getSubject())
+                    .parameters(parameterMap).execute();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
+        }
+    }
+
+    protected void configureService(AdminCommandContext context, String commandName, String notifierName) {
+        ParameterMap parameterMap = new ParameterMap();
+
+        if (enabled != null) {
+            if (enabled) {
+                parameterMap.insert("enableNotifiers", notifierName);
+            } else {
+                parameterMap.insert("disableNotifiers", notifierName);
+            }
         }
 
-        if (StringUtils.ok(oid)) {
-            parameterMap.insert("oid", oid);
+        if (dynamic != null) {
+            parameterMap.insert("dynamic", dynamic.toString());
         }
 
-        if (StringUtils.ok(version)) {
-            parameterMap.insert("version", version);
-        }
-
-        if (StringUtils.ok(hostName)) {
-            parameterMap.insert("hostName", hostName);
-        }
-
-        if (port != null) {
-            parameterMap.insert("port", port.toString());
+        if (target != null) {
+            parameterMap.insert("target", target);
         }
 
         try {
@@ -148,4 +130,5 @@ public class SnmpNotificationConfigurer extends BaseSetNotifierConfigurationComm
             context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
         }
     }
+
 }

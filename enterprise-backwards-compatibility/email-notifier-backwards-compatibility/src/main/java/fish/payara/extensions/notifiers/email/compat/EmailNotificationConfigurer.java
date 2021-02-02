@@ -37,36 +37,28 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.jms;
+package fish.payara.extensions.notifiers.email.compat;
 
-
-import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.extensions.notifiers.email.SetEmailNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
-import org.glassfish.api.ActionReport;
-import org.glassfish.api.Param;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.CommandLock;
-import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
-import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
-import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
 
-import java.util.logging.Level;
-
 /**
- * Deprecated, folded into {@link fish.payara.notification.jms.SetJmsNotifierConfigurationCommand}
+ * Deprecated, folded into {@link SetEmailNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated
-@Service(name = "notification-jms-configure")
+@Service(name = "notification-email-configure")
 @PerLookup
 @CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
@@ -74,87 +66,14 @@ import java.util.logging.Level;
 @RestEndpoints({
         @RestEndpoint(configBean = NotificationServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "notification-jms-configure",
-                description = "Configures JMS Notification Service")
+                path = "notification-email-configure",
+                description = "Configures Email Notification Service")
 })
-public class JmsNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
-
-    @Param(name = "contextFactoryClass")
-    private String contextFactoryClass;
-
-    @Param(name = "connectionFactoryName")
-    private String connectionFactoryName;
-
-    @Param(name = "queueName")
-    private String queueName;
-
-    @Param(name = "url")
-    private String url;
-
-    @Param(name = "username", optional = true)
-    private String username;
-
-    @Param(name = "password", optional = true)
-    private String password;
+public class EmailNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-jms-notifier-configuration");
-    }
-
-    @Override
-    protected void configureNotifier(AdminCommandContext context, String commandName) {
-        ParameterMap parameterMap = new ParameterMap();
-
-        if (enabled != null) {
-            parameterMap.insert("enabled", enabled.toString());
-        }
-
-        if (dynamic != null) {
-            parameterMap.insert("dynamic", dynamic.toString());
-        }
-
-        if (StringUtils.ok(target)) {
-            parameterMap.insert("target", target);
-        }
-
-        if (noisy != null) {
-            parameterMap.insert("noisy", noisy.toString());
-        }
-
-        if (StringUtils.ok(contextFactoryClass)) {
-            parameterMap.insert("contextFactoryClass", contextFactoryClass);
-        }
-
-        if (StringUtils.ok(connectionFactoryName)) {
-            parameterMap.insert("connectionFactoryName", connectionFactoryName);
-        }
-
-        if (StringUtils.ok(queueName)) {
-            parameterMap.insert("queueName", queueName);
-        }
-
-        if (StringUtils.ok(url)) {
-            parameterMap.insert("url", url);
-        }
-
-        if (StringUtils.ok(username)) {
-            parameterMap.insert("username", username);
-        }
-
-        if (StringUtils.ok(password)) {
-            parameterMap.insert("password", password);
-        }
-
-        try {
-            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
-                    .getCommandInvocation(commandName,
-                            context.getActionReport().addSubActionsReport(), context.getSubject())
-                    .parameters(parameterMap).execute();
-        } catch (Exception exception) {
-            logger.log(Level.SEVERE, exception.getMessage());
-            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
-        }
+        configureNotifier(context, "set-email-notifier-configuration");
     }
 
 }

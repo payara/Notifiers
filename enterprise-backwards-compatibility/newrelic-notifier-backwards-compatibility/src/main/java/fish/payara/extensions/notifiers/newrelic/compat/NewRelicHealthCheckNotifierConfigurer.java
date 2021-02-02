@@ -37,13 +37,12 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.cdieventbus;
+package fish.payara.extensions.notifiers.newrelic.compat;
 
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
-import org.glassfish.api.admin.CommandLock;
 import org.glassfish.api.admin.ExecuteOn;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
@@ -54,26 +53,25 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Deprecated, folded into {@link fish.payara.notification.eventbus.core.SetCDIEventbusNotifierConfigurationCommand}
  * @author mertcaliskan
+ * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
  */
 @Deprecated
-@Service(name = "notification-cdieventbus-configure")
+@Service(name = "healthcheck--newrelic-notifier-configure")
 @PerLookup
-@CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
-        @RestEndpoint(configBean = NotificationServiceConfiguration.class,
+        @RestEndpoint(configBean = HealthCheckServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "notification-cdieventbus-configure",
-                description = "Configures CDI Event Bus Notification Service")
+                path = "healthcheck-newrelic-notifier-configure",
+                description = "Configures New Relic Notifier for HealthCheck Service")
 })
-public class CdiEventBusNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
+public class NewRelicHealthCheckNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
-    public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-cdieventbus-notifier-configuration");
+    public void execute(AdminCommandContext context) {
+        configureNotifier(context, "set-newrelic-notifier-configuration");
+        configureService(context, "set-healthcheck-configuration", "newrelic-notifier");
     }
-
 }

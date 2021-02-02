@@ -37,7 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.jms;
+package fish.payara.extensions.notifiers.xmpp.compat;
 
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
@@ -53,28 +53,28 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Asadmin command to configure the JMS notifier with the monitoring service.
+ * Asadmin command to configure the Datadog notifier with the monitoring service.
  * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
  * @since 4.1.2.174
  * @author jonathan coustick
  */
 @Deprecated
-@Service(name = "monitoring-jms-notifier-configure")
+@Service(name = "monitoring-xmpp-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
         @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "monitoring-jms-notifier-configure",
-                description = "Configures JMS Notifier for Monitoring Service")
+                path = "monitoring-xmpp-notifier-configure",
+                description = "Configures XMPP Notifier for Monitoring Service")
 })
-public class JmsMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class XmppMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-jms-notifier-configuration");
-        configureService(context, "set-jmx-monitoring-configuration", "jms-notifier");
+        configureNotifier(context, "set-xmpp-notifier-configuration");
+        configureService(context, "set-jmx-monitoring-configuration", "xmpp-notifier");
     }
 
 }

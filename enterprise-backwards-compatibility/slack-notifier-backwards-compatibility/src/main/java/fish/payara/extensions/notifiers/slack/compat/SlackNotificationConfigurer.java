@@ -37,7 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.xmpp;
+package fish.payara.extensions.notifiers.slack.compat;
 
 
 import com.sun.enterprise.util.StringUtils;
@@ -62,11 +62,11 @@ import org.jvnet.hk2.annotations.Service;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.xmpp.SetXmppNotifierConfigurationCommand}
+ * Deprecated, folded into {@link fish.payara.extensions.notifiers.slack.SetSlackNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated
-@Service(name = "notification-xmpp-configure")
+@Service(name = "notification-slack-configure")
 @PerLookup
 @CommandLock(CommandLock.LockType.NONE)
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
@@ -74,35 +74,23 @@ import java.util.logging.Level;
 @RestEndpoints({
         @RestEndpoint(configBean = NotificationServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "notification-xmpp-configure",
-                description = "Configures XMPP Notification Service")
+                path = "notification-slack-configure",
+                description = "Configures Slack Notification Service")
 })
-public class XmppNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
+public class SlackNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
-    @Param(name = "hostName")
-    private String hostName;
+    @Param(name = "token1")
+    private String token1;
 
-    @Param(name = "port", defaultValue = "5222", optional = true)
-    private Integer port;
+    @Param(name = "token2")
+    private String token2;
 
-    @Param(name = "serviceName")
-    private String serviceName;
-
-    @Param(name = "username", optional = true)
-    private String username;
-
-    @Param(name = "password", optional = true)
-    private String password;
-
-    @Param(name = "securityDisabled", defaultValue = "false", optional = true)
-    private Boolean securityDisabled;
-
-    @Param(name = "roomId")
-    private String roomId;
+    @Param(name = "token3")
+    private String token3;
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-xmpp-notifier-configuration");
+        configureNotifier(context, "set-slack-notifier-configuration");
     }
 
     @Override
@@ -125,32 +113,16 @@ public class XmppNotificationConfigurer extends BaseSetNotifierConfigurationComm
             parameterMap.insert("noisy", noisy.toString());
         }
 
-        if (StringUtils.ok(hostName)) {
-            parameterMap.insert("hostName", hostName);
+        if (StringUtils.ok(token1)) {
+            parameterMap.insert("token1", token1);
         }
 
-        if (port != null) {
-            parameterMap.insert("port", port.toString());
+        if (StringUtils.ok(token2)) {
+            parameterMap.insert("token2", token2);
         }
 
-        if (StringUtils.ok(serviceName)) {
-            parameterMap.insert("serviceName", serviceName);
-        }
-
-        if (StringUtils.ok(username)) {
-            parameterMap.insert("username", username);
-        }
-
-        if (StringUtils.ok(password)) {
-            parameterMap.insert("password", password);
-        }
-
-        if (securityDisabled != null) {
-            parameterMap.insert("securityDisabled", securityDisabled.toString());
-        }
-
-        if (StringUtils.ok(roomId)) {
-            parameterMap.insert("roomId", roomId);
+        if (StringUtils.ok(token3)) {
+            parameterMap.insert("token3", token3);
         }
 
         try {

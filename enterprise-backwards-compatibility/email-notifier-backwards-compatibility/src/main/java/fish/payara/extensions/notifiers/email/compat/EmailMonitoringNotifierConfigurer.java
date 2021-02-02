@@ -37,8 +37,7 @@
  * only if the new code is made subject to such option by the copyright
  * holder.
  */
-package fish.payara.extensions.notifiers.newrelic;
-
+package fish.payara.extensions.notifiers.email.compat;
 
 import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
@@ -53,28 +52,28 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
- * Asadmin command to configure the New Relic notifier with the monitoring service.
+ * Asadmin command to configure the Email notifier with the monitoring service.
  * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
  * @since 4.1.2.174
  * @author jonathan coustick
  */
 @Deprecated
-@Service(name = "monitoring-newrelic-notifier-configure")
+@Service(name = "monitoring-email-notifier-configure")
 @PerLookup
 @ExecuteOn({RuntimeType.DAS, RuntimeType.INSTANCE})
 @TargetType(value = {CommandTarget.DAS, CommandTarget.STANDALONE_INSTANCE, CommandTarget.CLUSTER, CommandTarget.CLUSTERED_INSTANCE, CommandTarget.CONFIG})
 @RestEndpoints({
         @RestEndpoint(configBean = MonitoringServiceConfiguration.class,
                 opType = RestEndpoint.OpType.POST,
-                path = "monitoring-newrelic-notifier-configure",
-                description = "Configures New Relic Notifier for Monitoring Service")
+                path = "monitoring-email-notifier-configure",
+                description = "Configures Email Notifier for Monitoring Service")
 })
-public class NewRelicMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
+public class EmailMonitoringNotifierConfigurer extends BaseSetNotifierConfigurationCommand {
 
     @Override
     public void execute(final AdminCommandContext context) {
-        configureNotifier(context, "set-newrelic-notifier-configuration");
-        configureService(context, "set-jmx-monitoring-configuration", "newrelic-notifier");
+        configureNotifier(context, "set-email-notifier-configuration");
+        configureService(context, "set-jmx-monitoring-configuration", "email-notifier");
     }
 
 }
