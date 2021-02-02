@@ -15,7 +15,7 @@
     <name>Notifiers Backwards Compatibility Aggregator</name>
 
     <modules>
-        <module>backwards-compatibility-common</module>
+        <module>backwards-compatibility-core</module>
         <module>datadog-notifier-backwards-compatibility</module>
         <module>email-notifier-backwards-compatibility</module>
         <module>jms-notifier-backwards-compatibility</module>

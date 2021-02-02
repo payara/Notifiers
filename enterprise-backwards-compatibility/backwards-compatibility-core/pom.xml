@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>backwards-compatibility-common</artifactId>
+    <artifactId>backwards-compatibility-core</artifactId>
     <packaging>glassfish-jar</packaging>
 
     <name>Backwards Compatibility Common</name>
@@ -18,6 +18,16 @@
         <dependency>
             <groupId>fish.payara.server.internal.common</groupId>
             <artifactId>internal-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-modules</groupId>
+            <artifactId>healthcheck-core</artifactId>
+            <version>${payara.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-appserver-modules</groupId>
+            <artifactId>jmx-monitoring</artifactId>
+            <version>${payara.version}</version>
         </dependency>
     </dependencies>
 
