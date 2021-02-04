@@ -40,7 +40,7 @@
 package fish.payara.extensions.notifiers.eventbus;
 
 
-import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.ExecuteOn;

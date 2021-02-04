@@ -42,9 +42,12 @@ package fish.payara.extensions.notifiers.compat;
 import com.sun.enterprise.config.serverbeans.Config;
 import com.sun.enterprise.config.serverbeans.Configs;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
+import fish.payara.nucleus.requesttracing.configuration.RequestTracingServiceConfiguration;
 import org.glassfish.api.admin.config.ConfigurationUpgrade;
 import org.glassfish.hk2.api.PostConstruct;
+import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
 
 import javax.inject.Inject;
@@ -61,18 +64,18 @@ public class UpgradeService implements ConfigurationUpgrade, PostConstruct {
     @Inject
     HealthCheckServiceConfiguration healthCheckServiceConfiguration;
 
-//    @Inject
-//    JMXMonitoringConfiguration
+    @Inject
+    MonitoringServiceConfiguration monitoringServiceConfiguration;
+
+    @Inject
+    RequestTracingServiceConfiguration requestTracingServiceConfiguration;
 
     @Override
     public void postConstruct() {
         for (Config config : configs.getConfig()) {
-            upgradeNotifiers(config);
+            System.out.println(config.getName());
+//            upgradeNotifiers(config);
         }
-    }
-
-    private void upgradeNotifiers(Config config) {
-
     }
 
 }

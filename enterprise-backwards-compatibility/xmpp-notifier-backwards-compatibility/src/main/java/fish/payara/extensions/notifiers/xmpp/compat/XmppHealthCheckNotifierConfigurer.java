@@ -40,7 +40,7 @@
 package fish.payara.extensions.notifiers.xmpp.compat;
 
 
-import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.ExecuteOn;

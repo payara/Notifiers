@@ -41,7 +41,7 @@ package fish.payara.extensions.notifiers.newrelic.compat;
 
 
 import com.sun.enterprise.util.StringUtils;
-import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.ActionReport;
 import org.glassfish.api.Param;

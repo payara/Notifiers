@@ -312,7 +312,7 @@
         <profile>
             <id>BuildEnterpriseNotifiers</id>
             <properties>
-                <payara.version>5.25.0-SNAPSHOT</payara.version>
+                <payara.version>5.26.0-SNAPSHOT</payara.version>
             </properties>
 
             <build>

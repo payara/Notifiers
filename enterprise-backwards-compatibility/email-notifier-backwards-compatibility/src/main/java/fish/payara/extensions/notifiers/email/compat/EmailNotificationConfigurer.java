@@ -39,7 +39,7 @@
  */
 package fish.payara.extensions.notifiers.email.compat;
 
-import fish.payara.extensions.notifiers.BaseSetNotifierConfigurationCommand;
+import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.extensions.notifiers.email.SetEmailNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.admin.AdminCommandContext;
