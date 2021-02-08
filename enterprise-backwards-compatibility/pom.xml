@@ -5,7 +5,7 @@
     <parent>
         <artifactId>notifiers-parent</artifactId>
         <groupId>fish.payara.extensions.notifiers</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0-enterprise-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,43 +15,18 @@
     <name>Notifiers Backwards Compatibility Aggregator</name>
 
     <modules>
-        <module>backwards-compatibility-core</module>
+        <module>notifier-backwards-compatibility-config</module>
+        <module>notifier-backwards-compatibility-core</module>
+        <module>cdi-eventbus-notifier-backwards-compatibility</module>
         <module>datadog-notifier-backwards-compatibility</module>
         <module>email-notifier-backwards-compatibility</module>
+        <module>eventbus-notifier-backwards-compatibility</module>
         <module>jms-notifier-backwards-compatibility</module>
+        <module>log-notifier-backwards-compatibility</module>
         <module>newrelic-notifier-backwards-compatibility</module>
         <module>slack-notifier-backwards-compatibility</module>
         <module>snmp-notifier-backwards-compatibility</module>
         <module>xmpp-notifier-backwards-compatibility</module>
-        <module>log-notifier-backwards-compatibility</module>
-        <module>eventbus-notifier-backwards-compatibility</module>
-        <module>cdi-eventbus-notifier-backwards-compatibility</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-install-plugin</artifactId>
-                <inherited>false</inherited>
-                <executions>
-                    <execution>
-                        <id>default-install</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>install</goal>
-                        </goals>
-                        <configuration>
-                            <skip>false</skip>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>enterprise-install</id>
-                        <phase>none</phase>
-                        <inherited>false</inherited>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>

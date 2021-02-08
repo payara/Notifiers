@@ -5,7 +5,7 @@
     <parent>
         <artifactId>enterprise-backwards-compatibility</artifactId>
         <groupId>fish.payara.extensions.notifiers</groupId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0-enterprise-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -17,16 +17,14 @@
     <dependencies>
         <dependency>
             <groupId>fish.payara.extensions.notifiers</groupId>
-            <artifactId>backwards-compatibility-core</artifactId>
+            <artifactId>notifier-backwards-compatibility-core</artifactId>
             <version>${project.version}</version>
-            <classifier>enterprise</classifier>
         </dependency>
         <dependency>
             <groupId>fish.payara.extensions.notifiers</groupId>
             <artifactId>snmp-notifier-core</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-            <classifier>enterprise</classifier>
         </dependency>
     </dependencies>
 

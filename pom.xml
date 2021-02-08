@@ -43,13 +43,13 @@
 
     <groupId>fish.payara.extensions.notifiers</groupId>
     <artifactId>notifiers-parent</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0-enterprise-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>5.2020.5</payara.version>
+        <payara.version>5.26.0-SNAPSHOT</payara.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -303,92 +303,8 @@
     <distributionManagement>
         <repository>
             <id>payara-nexus</id>
-            <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
+            <url>https://nexus.payara.fish/repository/payara-enterprise/</url>
         </repository>
     </distributionManagement>
 
-
-    <profiles>
-        <profile>
-            <id>BuildEnterpriseNotifiers</id>
-            <properties>
-                <payara.version>5.26.0-SNAPSHOT</payara.version>
-            </properties>
-
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <artifactId>maven-jar-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>default-jar</id>
-                                    <configuration>
-                                        <classifier>enterprise</classifier>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-install-plugin</artifactId>
-                            <version>3.0.0-M1</version>
-                            <executions>
-                                <execution>
-                                    <id>default-install</id>
-                                    <phase>install</phase>
-                                    <goals>
-                                        <goal>install</goal>
-                                    </goals>
-                                    <configuration>
-                                        <skip>true</skip>
-                                    </configuration>
-                                </execution>
-                                <execution>
-                                    <id>enterprise-install</id>
-                                    <phase>install</phase>
-                                    <goals>
-                                        <goal>install-file</goal>
-                                    </goals>
-                                    <configuration>
-                                        <file>${project.build.directory}${file.separator}${project.artifactId}-${project.version}-enterprise.jar</file>
-                                        <classifier>enterprise</classifier>
-                                        <pomFile>pom.xml</pomFile>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-install-plugin</artifactId>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <id>default-install</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
-                                <configuration>
-                                    <skip>false</skip>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>enterprise-install</id>
-                                <phase>none</phase>
-                                <inherited>false</inherited>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <modules>
-                <module>enterprise-backwards-compatibility</module>
-            </modules>
-        </profile>
-    </profiles>
 </project>
