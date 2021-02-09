@@ -50,7 +50,6 @@ import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import fish.payara.nucleus.requesttracing.configuration.RequestTracingServiceConfiguration;
-import org.glassfish.api.admin.config.ConfigExtension;
 import org.glassfish.api.admin.config.ConfigurationUpgrade;
 import org.glassfish.hk2.api.PostConstruct;
 import org.jvnet.hk2.config.ConfigSupport;
