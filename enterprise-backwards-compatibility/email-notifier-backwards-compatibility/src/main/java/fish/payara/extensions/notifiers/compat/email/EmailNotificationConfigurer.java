@@ -114,6 +114,10 @@ public class EmailNotificationConfigurer extends BaseSetNotifierConfigurationCom
             parameterMap.insert("noisy", noisy.toString());
         }
 
+        if (StringUtils.ok(jndiName)) {
+            parameterMap.insert("jndiName", jndiName);
+        }
+
         // The "to" parameter has changed name on the new command to "recipient"
         if (StringUtils.ok(to)) {
             parameterMap.insert("recipient", to);
