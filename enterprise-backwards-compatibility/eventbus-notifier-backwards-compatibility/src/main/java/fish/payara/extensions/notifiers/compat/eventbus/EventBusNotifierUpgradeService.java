@@ -47,6 +47,11 @@ import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jvnet.hk2.annotations.Service;
 
+/**
+ * Service that upgrades legacy config on server start.
+ *
+ * @author Andrew Pielage
+ */
 @Service
 @RunLevel(StartupRunLevel.VAL)
 public class EventBusNotifierUpgradeService extends BaseNotifierUpgradeService {
@@ -65,6 +70,7 @@ public class EventBusNotifierUpgradeService extends BaseNotifierUpgradeService {
                 continue;
             }
 
+            // Upgrade each of the services that publish to notifiers
             upgradeRequestTracingService(config, notifierName, EventBusNotifier.class);
             upgradeMonitoringService(config, notifierName, EventBusNotifier.class);
             upgradeHealthCheckService(config, notifierName, EventBusNotifier.class);

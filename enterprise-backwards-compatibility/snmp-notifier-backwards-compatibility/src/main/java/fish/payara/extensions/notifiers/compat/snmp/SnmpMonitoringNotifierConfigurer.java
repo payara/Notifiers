@@ -54,7 +54,9 @@ import org.jvnet.hk2.annotations.Service;
 
 /**
  * Asadmin command to configure the SNMP notifier with the monitoring service.
- * Deprecated, folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated folded into {@link fish.payara.jmx.monitoring.admin.SetJMXMonitoringConfiguration}
  * @since 4.1.2.174
  * @author jonathan coustick
  */

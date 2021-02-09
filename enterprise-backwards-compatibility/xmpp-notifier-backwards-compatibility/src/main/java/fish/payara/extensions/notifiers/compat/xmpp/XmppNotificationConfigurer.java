@@ -62,7 +62,9 @@ import org.jvnet.hk2.annotations.Service;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.xmpp.SetXmppNotifierConfigurationCommand}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated folded into {@link fish.payara.extensions.notifier.xmpp.SetXmppNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

@@ -63,7 +63,9 @@ import javax.validation.constraints.Pattern;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link SetEmailNotifierConfigurationCommand}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated folded into {@link SetEmailNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

@@ -52,6 +52,11 @@ import org.jvnet.hk2.config.TransactionFailure;
 
 import java.util.logging.Level;
 
+/**
+ * Service that upgrades legacy config on server start.
+ *
+ * @author Andrew Pielage
+ */
 @Service
 @RunLevel(StartupRunLevel.VAL)
 public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
@@ -80,8 +85,10 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
                 return;
             }
 
+            // Upgrade the email notifier configuration itself
             upgradeNotifierService(emailNotifierConfiguration);
 
+            // Upgrade each of the services that publish to notifiers
             upgradeRequestTracingService(config, notifierName, EmailNotifier.class);
             upgradeMonitoringService(config, notifierName, EmailNotifier.class);
             upgradeHealthCheckService(config, notifierName, EmailNotifier.class);
@@ -94,18 +101,29 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
         String to = emailNotifierConfiguration.getTo();
         String recipient = emailNotifierConfiguration.getRecipient();
 
-        // Don't override an existing recipient
-        if (StringUtils.ok(to) && !StringUtils.ok(recipient)) {
+        if (StringUtils.ok(to)) {
+            // If we're not overriding anything, upgrade the existing property
+            if (!StringUtils.ok(recipient)) {
+                try {
+                    ConfigSupport.apply(emailNotifierConfigurationProxy -> {
+                        emailNotifierConfigurationProxy.setRecipient(to);
+                        return emailNotifierConfigurationProxy;
+                    }, emailNotifierConfiguration);
+                } catch (TransactionFailure transactionFailure) {
+                    logger.log(Level.WARNING,
+                            "Failed to upgrade legacy notifier configuration", transactionFailure);
+                }
+            }
+
+            // Finally, remove the deprecated property (more accurately set it to empty)
             try {
-                // Upgrade the property, deleting the deprecated properties as we go
-                ConfigSupport.apply(cProxy -> {
-                    cProxy.setRecipient(to);
-                    cProxy.setTo("");
-                    return cProxy;
+                ConfigSupport.apply(emailNotifierConfigurationProxy -> {
+                    emailNotifierConfigurationProxy.setTo("");
+                    return emailNotifierConfigurationProxy;
                 }, emailNotifierConfiguration);
             } catch (TransactionFailure transactionFailure) {
                 logger.log(Level.WARNING,
-                        "Failed to upgrade legacy notifier configuration", transactionFailure);
+                        "Failed to remove legacy notifier configuration", transactionFailure);
             }
         }
     }

@@ -60,6 +60,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Base class that the notifier upgrade services pull from, containing generic methods shared by all.
+ *
+ * @author Andrew Pielage
+ */
 public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade, PostConstruct {
 
     @Inject
@@ -68,6 +73,15 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
     @Inject
     protected Logger logger;
 
+    /**
+     * Retrieves the {@link PayaraNotifierConfiguration} for a given {@link NotificationServiceConfiguration}.
+     *
+     * @param notificationServiceConfiguration The {@link NotificationServiceConfiguration} to get config from
+     * @param notifierConfigurationClass       The {@link PayaraNotifierConfiguration} to get
+     * @param <T>                              The type of {@link PayaraNotifierConfiguration} to get
+     * @return The {@link PayaraNotifierConfiguration} for the specified {@link NotificationServiceConfiguration}, or
+     * null if it can't be found or created
+     */
     protected <T extends PayaraNotifierConfiguration> T getNotifierConfiguration(
             NotificationServiceConfiguration notificationServiceConfiguration, Class<T> notifierConfigurationClass) {
         T notifierConfiguration = notificationServiceConfiguration.getNotifierConfigurationByType(
@@ -96,6 +110,15 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
         return notifierConfiguration;
     }
 
+    /**
+     * Upgrades any configured legacy notifiers for a given {@link RequestTracingServiceConfiguration}, before removing
+     * the legacy config. If there is existing "upgraded" config, it does not override it.
+     *
+     * @param config        The {@link Config} to upgrade the {@link RequestTracingServiceConfiguration} of.
+     * @param notifierName  The name of the notifier, corresponding to its XML tag in the domain.xml
+     * @param notifierClass The legacy {@link Notifier} to upgrade
+     * @param <T>           The type of legacy {@link Notifier} to upgrade
+     */
     protected <T extends Notifier> void upgradeRequestTracingService(Config config, String notifierName,
             Class<T> notifierClass) {
         RequestTracingServiceConfiguration requestTracingServiceConfiguration = config.getExtensionByType(
@@ -141,6 +164,15 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
         }
     }
 
+    /**
+     * Upgrades any configured legacy notifiers for a given {@link MonitoringServiceConfiguration}, before removing
+     * the legacy config. If there is existing "upgraded" config, it does not override it.
+     *
+     * @param config        The {@link Config} to upgrade the {@link MonitoringServiceConfiguration} of.
+     * @param notifierName  The name of the notifier, corresponding to its XML tag in the domain.xml
+     * @param notifierClass The legacy {@link Notifier} to upgrade
+     * @param <T>           The type of legacy {@link Notifier} to upgrade
+     */
     protected <T extends Notifier> void upgradeMonitoringService(Config config, String notifierName,
             Class<T> notifierClass) {
         MonitoringServiceConfiguration monitoringServiceConfiguration = config.getExtensionByType(
@@ -186,6 +218,15 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
         }
     }
 
+    /**
+     * Upgrades any configured legacy notifiers for a given {@link HealthCheckServiceConfiguration}, before removing
+     * the legacy config. If there is existing "upgraded" config, it does not override it.
+     *
+     * @param config        The {@link Config} to upgrade the {@link HealthCheckServiceConfiguration} of.
+     * @param notifierName  The name of the notifier, corresponding to its XML tag in the domain.xml
+     * @param notifierClass The legacy {@link Notifier} to upgrade
+     * @param <T>           The type of legacy {@link Notifier} to upgrade
+     */
     protected <T extends Notifier> void upgradeHealthCheckService(Config config, String notifierName,
             Class<T> notifierClass) {
         HealthCheckServiceConfiguration healthCheckServiceConfiguration = config.getExtensionByType(
@@ -231,6 +272,15 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
         }
     }
 
+    /**
+     * Upgrades any configured legacy notifiers for a given {@link AdminAuditConfiguration}, before removing
+     * the legacy config. If there is existing "upgraded" config, it does not override it.
+     *
+     * @param config        The {@link Config} to upgrade the {@link AdminAuditConfiguration} of.
+     * @param notifierName  The name of the notifier, corresponding to its XML tag in the domain.xml
+     * @param notifierClass The legacy {@link Notifier} to upgrade
+     * @param <T>           The type of legacy {@link Notifier} to upgrade
+     */
     protected <T extends Notifier> void upgradeAdminAuditService(Config config, String notifierName,
             Class<T> notifierClass) {
         AdminAuditConfiguration adminAuditConfiguration = config.getExtensionByType(

@@ -61,7 +61,9 @@ import org.jvnet.hk2.annotations.Service;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link fish.payara.notification.eventbus.core.SetCDIEventbusNotifierConfigurationCommand}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated Deprecated, folded into {@link fish.payara.notification.eventbus.core.SetCDIEventbusNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

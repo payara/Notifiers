@@ -52,8 +52,10 @@ import org.glassfish.hk2.api.PerLookup;
 import org.jvnet.hk2.annotations.Service;
 
 /**
+ * Legacy command that now just invokes the command that replaced it.
+ *
  * @author mertcaliskan
- * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckConfiguration}
+ * @deprecated folded into {@link fish.payara.nucleus.healthcheck.admin.SetHealthCheckServiceConfiguration}
  */
 @Deprecated
 @Service(name = "healthcheck-datadog-notifier-configure")

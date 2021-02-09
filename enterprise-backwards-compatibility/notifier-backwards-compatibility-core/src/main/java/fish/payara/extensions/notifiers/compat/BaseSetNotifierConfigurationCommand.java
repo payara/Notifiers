@@ -54,6 +54,13 @@ import javax.inject.Inject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Base class that the legacy notifier configuration commands pull from, containing "base" configuration methods and
+ * params shared by all. The configuration methods are the barebones of what needs to get updated, it is expected
+ * that commands extending this class override the methods if they have additional parameters to configure.
+ *
+ * @author Andrew Pielage
+ */
 public abstract class BaseSetNotifierConfigurationCommand implements AdminCommand {
 
     @Param(name = "target", optional = true, defaultValue = SystemPropertyConstants.DAS_SERVER_NAME)
@@ -71,6 +78,14 @@ public abstract class BaseSetNotifierConfigurationCommand implements AdminComman
     @Inject
     protected Logger logger;
 
+    /**
+     * Executes the provided asadmin command with the base set of notifier parameters:
+     * target, dynamic, enabled, and noisy.
+     * Expected to be used with commands such as "set-email-notifier-configuration"
+     *
+     * @param context     The context of the invoking admin command
+     * @param commandName The name of the command to execute
+     */
     protected void configureNotifier(AdminCommandContext context, String commandName) {
         ParameterMap parameterMap = new ParameterMap();
 
@@ -101,6 +116,15 @@ public abstract class BaseSetNotifierConfigurationCommand implements AdminComman
         }
     }
 
+    /**
+     * Executes the provided asadmin command for configuring notifiers on services, using the base set of parameters:
+     * target, dynamic, and enabled (noisy gets dropped). Intended for use with commands such as
+     * "set-healthcheck-configuration" to enable or disable publishing to a specific notifier (e.g. datadog-notifier).
+     *
+     * @param context      The context of the invoking admin command
+     * @param commandName  The name of the command to execute
+     * @param notifierName The name of the notifier
+     */
     protected void configureService(AdminCommandContext context, String commandName, String notifierName) {
         ParameterMap parameterMap = new ParameterMap();
 

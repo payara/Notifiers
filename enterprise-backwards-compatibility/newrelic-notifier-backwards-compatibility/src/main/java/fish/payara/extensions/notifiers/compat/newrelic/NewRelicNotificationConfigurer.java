@@ -62,7 +62,9 @@ import org.jvnet.hk2.annotations.Service;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.newrelic.SetNewRelicNotifierConfigurationCommand}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated folded into {@link fish.payara.extensions.notifiers.newrelic.SetNewRelicNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

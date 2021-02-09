@@ -61,7 +61,9 @@ import org.jvnet.hk2.annotations.Service;
 import java.util.logging.Level;
 
 /**
- * Deprecated, folded into {@link fish.payara.extensions.notifiers.datadog.SetDatadogNotifierConfigurationCommand}
+ * Legacy command that now just invokes the command that replaced it.
+ *
+ * @deprecated folded into {@link fish.payara.extensions.notifiers.datadog.SetDatadogNotifierConfigurationCommand}
  * @author mertcaliskan
  */
 @Deprecated

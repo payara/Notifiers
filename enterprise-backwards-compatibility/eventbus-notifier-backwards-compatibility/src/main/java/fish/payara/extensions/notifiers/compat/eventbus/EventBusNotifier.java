@@ -44,6 +44,10 @@ import fish.payara.extensions.notifiers.compat.config.NotifierConfigurationType;
 import fish.payara.extensions.notifiers.compat.config.NotifierType;
 import org.jvnet.hk2.config.Configured;
 
+/**
+ * Legacy notifier configuration, used to prevent enabled notifiers for services such as Request Tracing being lost
+ * upon upgrade.
+ */
 @Configured(name = "eventbus-notifier")
 @NotifierConfigurationType(type = NotifierType.EVENTBUS)
 @Deprecated
