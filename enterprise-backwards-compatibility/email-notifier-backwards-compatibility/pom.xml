@@ -44,7 +44,7 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>enterprise-backwards-compatibility</artifactId>
-        <version>1.0-enterprise-SNAPSHOT</version>
+        <version>1.0-enterprise</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
