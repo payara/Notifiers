@@ -39,18 +39,26 @@
  */
 package fish.payara.extensions.notifiers.compat.cdieventbus;
 
+import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import org.glassfish.api.ActionReport;
+import org.glassfish.api.Param;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
+
+import java.util.logging.Level;
 
 /**
  * Deprecated, folded into {@link fish.payara.notification.eventbus.core.SetCDIEventbusNotifierConfigurationCommand}
@@ -70,9 +78,55 @@ import org.jvnet.hk2.annotations.Service;
 })
 public class CdiEventBusNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
+    @Param(name = "loopBack", defaultValue = "false", optional = true)
+    private Boolean loopBack;
+
+    // Not using it, it's needed in order get the asadmin invocation right
+    @Param(name = "hazelcastEnabled", defaultValue = "false", optional = true)
+    private Boolean hazelcastEnabled;
+
     @Override
     public void execute(final AdminCommandContext context) {
         configureNotifier(context, "set-cdieventbus-notifier-configuration");
+    }
+
+    @Override
+    protected void configureNotifier(AdminCommandContext context, String commandName) {
+        ParameterMap parameterMap = new ParameterMap();
+
+        if (enabled != null) {
+            parameterMap.insert("enabled", enabled.toString());
+        }
+
+        if (dynamic != null) {
+            parameterMap.insert("dynamic", dynamic.toString());
+        }
+
+        if (StringUtils.ok(target)) {
+            parameterMap.insert("target", target);
+        }
+
+        if (noisy != null) {
+            parameterMap.insert("noisy", noisy.toString());
+        }
+
+        if (loopBack != null) {
+            parameterMap.insert("loopBack", loopBack.toString());
+        }
+
+        if (hazelcastEnabled != null) {
+            parameterMap.insert("hazelcastEnabled", hazelcastEnabled.toString());
+        }
+
+        try {
+            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
+                    .getCommandInvocation(commandName,
+                            context.getActionReport().addSubActionsReport(), context.getSubject())
+                    .parameters(parameterMap).execute();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
+        }
     }
 
 }

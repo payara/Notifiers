@@ -39,19 +39,28 @@
  */
 package fish.payara.extensions.notifiers.compat.email;
 
+import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.extensions.notifiers.email.SetEmailNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import org.glassfish.api.ActionReport;
+import org.glassfish.api.Param;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
+
+import javax.validation.constraints.Pattern;
+import java.util.logging.Level;
 
 /**
  * Deprecated, folded into {@link SetEmailNotifierConfigurationCommand}
@@ -71,9 +80,52 @@ import org.jvnet.hk2.annotations.Service;
 })
 public class EmailNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
+    @Param(name = "jndiName")
+    private String jndiName;
+
+    @Param(name = "to")
+    @Pattern(regexp = "\\S+@\\S+")
+    private String to;
+
     @Override
     public void execute(final AdminCommandContext context) {
         configureNotifier(context, "set-email-notifier-configuration");
+    }
+
+    @Override
+    protected void configureNotifier(AdminCommandContext context, String commandName) {
+        ParameterMap parameterMap = new ParameterMap();
+
+        if (enabled != null) {
+            parameterMap.insert("enabled", enabled.toString());
+        }
+
+        if (dynamic != null) {
+            parameterMap.insert("dynamic", dynamic.toString());
+        }
+
+        if (StringUtils.ok(target)) {
+            parameterMap.insert("target", target);
+        }
+
+        if (noisy != null) {
+            parameterMap.insert("noisy", noisy.toString());
+        }
+
+        // The "to" parameter has changed name on the new command to "recipient"
+        if (StringUtils.ok(to)) {
+            parameterMap.insert("recipient", to);
+        }
+
+        try {
+            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
+                    .getCommandInvocation(commandName,
+                            context.getActionReport().addSubActionsReport(), context.getSubject())
+                    .parameters(parameterMap).execute();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
+        }
     }
 
 }

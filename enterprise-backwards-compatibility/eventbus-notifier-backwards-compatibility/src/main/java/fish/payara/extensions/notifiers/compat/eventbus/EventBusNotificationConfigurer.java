@@ -40,18 +40,26 @@
 package fish.payara.extensions.notifiers.compat.eventbus;
 
 
+import com.sun.enterprise.util.StringUtils;
 import fish.payara.extensions.notifiers.compat.BaseSetNotifierConfigurationCommand;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
+import org.glassfish.api.ActionReport;
+import org.glassfish.api.Param;
 import org.glassfish.api.admin.AdminCommandContext;
 import org.glassfish.api.admin.CommandLock;
+import org.glassfish.api.admin.CommandRunner;
 import org.glassfish.api.admin.ExecuteOn;
+import org.glassfish.api.admin.ParameterMap;
 import org.glassfish.api.admin.RestEndpoint;
 import org.glassfish.api.admin.RestEndpoints;
 import org.glassfish.api.admin.RuntimeType;
 import org.glassfish.config.support.CommandTarget;
 import org.glassfish.config.support.TargetType;
 import org.glassfish.hk2.api.PerLookup;
+import org.glassfish.internal.api.Globals;
 import org.jvnet.hk2.annotations.Service;
+
+import java.util.logging.Level;
 
 /**
  * Deprecated, folded into {@link fish.payara.notification.eventbus.core.SetEventbusNotifierConfigurationCommand}
@@ -71,9 +79,47 @@ import org.jvnet.hk2.annotations.Service;
 })
 public class EventBusNotificationConfigurer extends BaseSetNotifierConfigurationCommand {
 
+    @Param(name = "topicName", defaultValue = "payara.notification.event", optional = true)
+    private String topicName;
+
     @Override
     public void execute(final AdminCommandContext context) {
         configureNotifier(context, "set-eventbus-notifier-configuration");
+    }
+
+    @Override
+    protected void configureNotifier(AdminCommandContext context, String commandName) {
+        ParameterMap parameterMap = new ParameterMap();
+
+        if (enabled != null) {
+            parameterMap.insert("enabled", enabled.toString());
+        }
+
+        if (dynamic != null) {
+            parameterMap.insert("dynamic", dynamic.toString());
+        }
+
+        if (StringUtils.ok(target)) {
+            parameterMap.insert("target", target);
+        }
+
+        if (noisy != null) {
+            parameterMap.insert("noisy", noisy.toString());
+        }
+
+        if (StringUtils.ok(topicName)) {
+            parameterMap.insert("topicName", topicName);
+        }
+
+        try {
+            Globals.getDefaultBaseServiceLocator().getService(CommandRunner.class)
+                    .getCommandInvocation(commandName,
+                            context.getActionReport().addSubActionsReport(), context.getSubject())
+                    .parameters(parameterMap).execute();
+        } catch (Exception exception) {
+            logger.log(Level.SEVERE, exception.getMessage());
+            context.getActionReport().setActionExitCode(ActionReport.ExitCode.FAILURE);
+        }
     }
 
 }
