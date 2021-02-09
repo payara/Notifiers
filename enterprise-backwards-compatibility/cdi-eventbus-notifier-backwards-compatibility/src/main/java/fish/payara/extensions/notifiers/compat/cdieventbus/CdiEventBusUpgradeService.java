@@ -51,7 +51,7 @@ import org.jvnet.hk2.annotations.Service;
 @RunLevel(StartupRunLevel.VAL)
 public class CdiEventBusUpgradeService extends BaseNotifierUpgradeService {
 
-    private static final String notifierName = "cdi-eventbus-notifier";
+    private static final String notifierName = "cdieventbus-notifier";
 
     @Override
     public void postConstruct() {
@@ -68,6 +68,7 @@ public class CdiEventBusUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, CdiEventBusNotifier.class);
             upgradeMonitoringService(config, notifierName, CdiEventBusNotifier.class);
             upgradeHealthCheckService(config, notifierName, CdiEventBusNotifier.class);
+            upgradeAdminAuditService(config, notifierName, CdiEventBusNotifier.class);
         }
     }
 

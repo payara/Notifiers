@@ -68,6 +68,7 @@ public class SlackNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, SlackNotifier.class);
             upgradeMonitoringService(config, notifierName, SlackNotifier.class);
             upgradeHealthCheckService(config, notifierName, SlackNotifier.class);
+            upgradeAdminAuditService(config, notifierName, SlackNotifier.class);
         }
     }
 }

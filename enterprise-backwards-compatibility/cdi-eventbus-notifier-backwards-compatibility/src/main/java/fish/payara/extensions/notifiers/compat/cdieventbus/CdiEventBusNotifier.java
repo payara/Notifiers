@@ -40,12 +40,12 @@
 
 package fish.payara.extensions.notifiers.compat.cdieventbus;
 
-import fish.payara.extensions.notifiers.compat.Notifier;
-import fish.payara.extensions.notifiers.compat.NotifierConfigurationType;
-import fish.payara.extensions.notifiers.compat.NotifierType;
+import fish.payara.extensions.notifiers.compat.config.Notifier;
+import fish.payara.extensions.notifiers.compat.config.NotifierConfigurationType;
+import fish.payara.extensions.notifiers.compat.config.NotifierType;
 import org.jvnet.hk2.config.Configured;
 
-@Configured
+@Configured(name = "cdi-eventbus-notifier")
 @NotifierConfigurationType(type = NotifierType.CDIEVENTBUS)
 @Deprecated
 public interface CdiEventBusNotifier extends Notifier {

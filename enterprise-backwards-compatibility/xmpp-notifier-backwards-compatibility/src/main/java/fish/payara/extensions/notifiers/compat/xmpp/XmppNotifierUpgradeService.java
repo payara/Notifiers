@@ -68,6 +68,7 @@ public class XmppNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, XmppNotifier.class);
             upgradeMonitoringService(config, notifierName, XmppNotifier.class);
             upgradeHealthCheckService(config, notifierName, XmppNotifier.class);
+            upgradeAdminAuditService(config, notifierName, XmppNotifier.class);
         }
     }
 }

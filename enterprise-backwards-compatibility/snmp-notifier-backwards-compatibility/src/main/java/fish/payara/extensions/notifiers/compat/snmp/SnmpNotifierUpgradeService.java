@@ -68,6 +68,7 @@ public class SnmpNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, SnmpNotifier.class);
             upgradeMonitoringService(config, notifierName, SnmpNotifier.class);
             upgradeHealthCheckService(config, notifierName, SnmpNotifier.class);
+            upgradeAdminAuditService(config, notifierName, SnmpNotifier.class);
         }
     }
 }

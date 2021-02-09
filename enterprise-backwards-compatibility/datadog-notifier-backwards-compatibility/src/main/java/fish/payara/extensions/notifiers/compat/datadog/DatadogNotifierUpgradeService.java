@@ -67,6 +67,7 @@ public class DatadogNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, DatadogNotifier.class);
             upgradeMonitoringService(config, notifierName, DatadogNotifier.class);
             upgradeHealthCheckService(config, notifierName, DatadogNotifier.class);
+            upgradeAdminAuditService(config, notifierName, DatadogNotifier.class);
         }
     }
 }

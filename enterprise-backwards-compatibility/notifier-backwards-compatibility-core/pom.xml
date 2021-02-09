@@ -34,6 +34,11 @@
             <artifactId>jmx-monitoring</artifactId>
             <version>${payara.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-modules</groupId>
+            <artifactId>asadmin-audit</artifactId>
+            <version>${payara.version}</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -37,7 +37,7 @@
  * holder.
  */
 
-package fish.payara.extensions.notifiers.compat;
+package fish.payara.extensions.notifiers.compat.config;
 
 import org.jvnet.hk2.config.Attribute;
 import org.jvnet.hk2.config.ConfigBeanProxy;

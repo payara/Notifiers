@@ -68,6 +68,7 @@ public class LogNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, LogNotifier.class);
             upgradeMonitoringService(config, notifierName, LogNotifier.class);
             upgradeHealthCheckService(config, notifierName, LogNotifier.class);
+            upgradeAdminAuditService(config, notifierName, LogNotifier.class);
         }
     }
 }

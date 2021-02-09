@@ -68,6 +68,7 @@ public class NewRelicNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, NewRelicNotifier.class);
             upgradeMonitoringService(config, notifierName, NewRelicNotifier.class);
             upgradeHealthCheckService(config, notifierName, NewRelicNotifier.class);
+            upgradeAdminAuditService(config, notifierName, NewRelicNotifier.class);
         }
     }
 }

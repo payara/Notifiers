@@ -40,9 +40,9 @@
 
 package fish.payara.extensions.notifiers.compat.snmp;
 
-import fish.payara.extensions.notifiers.compat.Notifier;
-import fish.payara.extensions.notifiers.compat.NotifierConfigurationType;
-import fish.payara.extensions.notifiers.compat.NotifierType;
+import fish.payara.extensions.notifiers.compat.config.Notifier;
+import fish.payara.extensions.notifiers.compat.config.NotifierConfigurationType;
+import fish.payara.extensions.notifiers.compat.config.NotifierType;
 import org.jvnet.hk2.config.Configured;
 
 @Configured

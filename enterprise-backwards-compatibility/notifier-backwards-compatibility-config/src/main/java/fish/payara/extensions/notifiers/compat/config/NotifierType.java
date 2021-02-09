@@ -38,7 +38,7 @@
  * holder.
  */
 
-package fish.payara.extensions.notifiers.compat;
+package fish.payara.extensions.notifiers.compat.config;
 
 /**
  * The type of notifier types that notification service supports.

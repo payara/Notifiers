@@ -68,6 +68,7 @@ public class EventBusNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, EventBusNotifier.class);
             upgradeMonitoringService(config, notifierName, EventBusNotifier.class);
             upgradeHealthCheckService(config, notifierName, EventBusNotifier.class);
+            upgradeAdminAuditService(config, notifierName, EventBusNotifier.class);
         }
     }
 }

@@ -68,6 +68,7 @@ public class JmsNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, JmsNotifier.class);
             upgradeMonitoringService(config, notifierName, JmsNotifier.class);
             upgradeHealthCheckService(config, notifierName, JmsNotifier.class);
+            upgradeAdminAuditService(config, notifierName, JmsNotifier.class);
         }
     }
 }

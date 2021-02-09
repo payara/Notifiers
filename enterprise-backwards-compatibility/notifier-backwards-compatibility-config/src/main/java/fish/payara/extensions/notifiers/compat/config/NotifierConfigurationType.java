@@ -1,4 +1,4 @@
-package fish.payara.extensions.notifiers.compat;
+package fish.payara.extensions.notifiers.compat.config;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

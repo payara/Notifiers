@@ -85,6 +85,7 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, EmailNotifier.class);
             upgradeMonitoringService(config, notifierName, EmailNotifier.class);
             upgradeHealthCheckService(config, notifierName, EmailNotifier.class);
+            upgradeAdminAuditService(config, notifierName, EmailNotifier.class);
         }
     }
 

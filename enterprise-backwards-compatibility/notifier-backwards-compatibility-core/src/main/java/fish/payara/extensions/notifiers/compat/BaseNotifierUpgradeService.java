@@ -43,11 +43,14 @@ package fish.payara.extensions.notifiers.compat;
 import com.sun.enterprise.config.serverbeans.Config;
 import com.sun.enterprise.config.serverbeans.Configs;
 import com.sun.enterprise.util.StringUtils;
+import fish.payara.audit.AdminAuditConfiguration;
+import fish.payara.extensions.notifiers.compat.config.Notifier;
 import fish.payara.internal.notification.PayaraNotifierConfiguration;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import fish.payara.nucleus.requesttracing.configuration.RequestTracingServiceConfiguration;
+import org.glassfish.api.admin.config.ConfigExtension;
 import org.glassfish.api.admin.config.ConfigurationUpgrade;
 import org.glassfish.hk2.api.PostConstruct;
 import org.jvnet.hk2.config.ConfigSupport;
@@ -111,23 +114,30 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
             return;
         }
 
-        if (StringUtils.ok(notifier.getEnabled()) && Boolean.getBoolean(notifier.getEnabled())) {
+        if (StringUtils.ok(notifier.getEnabled()) && Boolean.valueOf(notifier.getEnabled())) {
             // Since this is enabled, there might be something for us to do.
             // Get the new notifier config list to see if this notifier is enabled - we don't want to override an
             // existing value
             List<String> notifiers = requestTracingServiceConfiguration.getNotifierList();
             if (!notifiers.contains(notifierName)) {
+                // No existing config to override, so let's migrate old to new
                 try {
-                    ConfigSupport.apply(rProxy -> {
-                        // No existing config to override, so let's enable it
-                        requestTracingServiceConfiguration.getNotifierList().add(notifierName);
-                        // And finally, delete the legacy config
-                        requestTracingServiceConfiguration.getLegacyNotifierList().remove(notifier);
-                        return rProxy;
+                    ConfigSupport.apply(requestTracingServiceConfigurationProxy -> {
+                        requestTracingServiceConfigurationProxy.getNotifierList().add(notifierName);
+                        return requestTracingServiceConfigurationProxy;
                     }, requestTracingServiceConfiguration);
                 } catch (TransactionFailure transactionFailure) {
                     logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
                 }
+            }
+            // And finally, delete the legacy config
+            try {
+                ConfigSupport.apply(requestTracingServiceConfigurationProxy -> {
+                    requestTracingServiceConfigurationProxy.getLegacyNotifierList().remove(notifier);
+                    return requestTracingServiceConfigurationProxy;
+                }, requestTracingServiceConfiguration);
+            } catch (TransactionFailure transactionFailure) {
+                logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
             }
         }
     }
@@ -149,23 +159,30 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
             return;
         }
 
-        if (StringUtils.ok(notifier.getEnabled()) && Boolean.getBoolean(notifier.getEnabled())) {
+        if (StringUtils.ok(notifier.getEnabled()) && Boolean.valueOf(notifier.getEnabled())) {
             // Since this is enabled, there might be something for us to do.
             // Get the new notifier config list to see if this notifier is enabled - we don't want to override an
             // existing value
             List<String> notifiers = monitoringServiceConfiguration.getNotifierList();
             if (!notifiers.contains(notifierName)) {
+                // No existing config to override, so let's migrate old to new
                 try {
-                    ConfigSupport.apply(rProxy -> {
-                        // No existing config to override, so let's enable it
-                        monitoringServiceConfiguration.getNotifierList().add(notifierName);
-                        // And finally, delete the legacy config
-                        monitoringServiceConfiguration.getLegacyNotifierList().remove(notifier);
-                        return rProxy;
+                    ConfigSupport.apply(monitoringServiceConfigurationProxy -> {
+                        monitoringServiceConfigurationProxy.getNotifierList().add(notifierName);
+                        return monitoringServiceConfigurationProxy;
                     }, monitoringServiceConfiguration);
                 } catch (TransactionFailure transactionFailure) {
                     logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
                 }
+            }
+            // And finally, delete the legacy config
+            try {
+                ConfigSupport.apply(monitoringServiceConfigurationProxy -> {
+                    monitoringServiceConfigurationProxy.getLegacyNotifierList().remove(notifier);
+                    return monitoringServiceConfigurationProxy;
+                }, monitoringServiceConfiguration);
+            } catch (TransactionFailure transactionFailure) {
+                logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
             }
         }
     }
@@ -187,23 +204,75 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
             return;
         }
 
-        if (StringUtils.ok(notifier.getEnabled()) && Boolean.getBoolean(notifier.getEnabled())) {
+        if (StringUtils.ok(notifier.getEnabled()) && Boolean.valueOf(notifier.getEnabled())) {
             // Since this is enabled, there might be something for us to do.
             // Get the new notifier config list to see if this notifier is enabled - we don't want to override an
             // existing value
             List<String> notifiers = healthCheckServiceConfiguration.getNotifierList();
             if (!notifiers.contains(notifierName)) {
+                // No existing config to override, so let's migrate old to new
                 try {
-                    ConfigSupport.apply(rProxy -> {
-                        // No existing config to override, so let's enable it
-                        healthCheckServiceConfiguration.getNotifierList().add(notifierName);
-                        // And finally, delete the legacy config
-                        healthCheckServiceConfiguration.getLegacyNotifierList().remove(notifier);
-                        return rProxy;
+                    ConfigSupport.apply(healthCheckServiceConfigurationProxy -> {
+                        healthCheckServiceConfigurationProxy.getNotifierList().add(notifierName);
+                        return healthCheckServiceConfigurationProxy;
                     }, healthCheckServiceConfiguration);
                 } catch (TransactionFailure transactionFailure) {
                     logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
                 }
+            }
+            // And finally, delete the legacy config
+            try {
+                ConfigSupport.apply(healthCheckServiceConfigurationProxy -> {
+                    healthCheckServiceConfigurationProxy.getLegacyNotifierList().remove(notifier);
+                    return healthCheckServiceConfigurationProxy;
+                }, healthCheckServiceConfiguration);
+            } catch (TransactionFailure transactionFailure) {
+                logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
+            }
+        }
+    }
+
+    protected <T extends Notifier> void upgradeAdminAuditService(Config config, String notifierName,
+            Class<T> notifierClass) {
+        AdminAuditConfiguration adminAuditConfiguration = config.getExtensionByType(
+                AdminAuditConfiguration.class);
+
+        if (adminAuditConfiguration == null) {
+            logger.log(Level.WARNING, "Could not find admin audit service configuration to upgrade for config: {0}",
+                    config.getName());
+            return;
+        }
+
+        T notifier = adminAuditConfiguration.getLegacyNotifierByType(notifierClass);
+        if (notifier == null) {
+            // If no config found, nothing to do!
+            return;
+        }
+
+        if (StringUtils.ok(notifier.getEnabled()) && Boolean.valueOf(notifier.getEnabled())) {
+            // Since this is enabled, there might be something for us to do.
+            // Get the new notifier config list to see if this notifier is enabled - we don't want to override an
+            // existing value
+            List<String> notifiers = adminAuditConfiguration.getNotifierList();
+            if (!notifiers.contains(notifierName)) {
+                // No existing config to override, so let's migrate old to new
+                try {
+                    ConfigSupport.apply(adminAuditConfigurationProxy -> {
+                        adminAuditConfigurationProxy.getNotifierList().add(notifierName);
+                        return adminAuditConfigurationProxy;
+                    }, adminAuditConfiguration);
+                } catch (TransactionFailure transactionFailure) {
+                    logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
+                }
+            }
+            // And finally, delete the legacy config
+            try {
+                ConfigSupport.apply(adminAuditConfigurationProxy -> {
+                    adminAuditConfigurationProxy.getLegacyNotifierList().remove(notifier);
+                    return adminAuditConfigurationProxy;
+                }, adminAuditConfiguration);
+            } catch (TransactionFailure transactionFailure) {
+                logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
             }
         }
     }
