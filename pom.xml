@@ -297,10 +297,22 @@
             <name>Payara Public Artifacts</name>
             <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
         </repository>
+        <repository>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>payara-nexus-enterprise</id>
+            <name>Payara Enterprise Artifacts</name>
+            <url>https://nexus.payara.fish/repository/payara-enterprise-artifacts/</url>
+        </repository>
     </repositories>
 
     <!-- Used for the deploy phase -->
     <distributionManagement>
+        <!-- Deploy to the main repo where the other distributions are published -->
         <repository>
             <id>payara-nexus</id>
             <url>https://nexus.payara.fish/repository/payara-enterprise/</url>
