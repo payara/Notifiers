@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>enterprise-backwards-compatibility</artifactId>
+        <groupId>fish.payara.extensions.notifiers</groupId>
+        <version>1.1-enterprise-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>notifier-backwards-compatibility-core</artifactId>
+    <packaging>glassfish-jar</packaging>
+
+    <name>Notifier Backwards Compatibility Core</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>fish.payara.server.internal.common</groupId>
+            <artifactId>internal-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.extensions.notifiers</groupId>
+            <artifactId>notifier-backwards-compatibility-config</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-modules</groupId>
+            <artifactId>healthcheck-core</artifactId>
+            <version>${payara.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-appserver-modules</groupId>
+            <artifactId>jmx-monitoring</artifactId>
+            <version>${payara.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fish.payara.server.internal.payara-modules</groupId>
+            <artifactId>asadmin-audit</artifactId>
+            <version>${payara.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>
