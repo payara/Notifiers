@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.jms;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class JmsNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(JmsNotifier.class)
+public class JmsNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "jms-notifier";
 
@@ -74,7 +76,11 @@ public class JmsNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, JmsNotifier.class);
             upgradeMonitoringService(config, notifierName, JmsNotifier.class);
             upgradeHealthCheckService(config, notifierName, JmsNotifier.class);
-            upgradeAdminAuditService(config, notifierName, JmsNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }

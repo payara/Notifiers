@@ -44,12 +44,12 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>1.1-enterprise-SNAPSHOT</version>
+        <version>1.0.1-enterprise-SNAPSHOT</version>
     </parent>
 
     <artifactId>teams-notifier-core</artifactId>
     <packaging>glassfish-jar</packaging>
-    <version>1.1-enterprise-SNAPSHOT</version>
+    <version>1.0.1-enterprise-SNAPSHOT</version>
 
     <name>Microsoft Teams Notifier Implementation</name>
 

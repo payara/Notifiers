@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.snmp;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class SnmpNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(SnmpNotifier.class)
+public class SnmpNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "snmp-notifier";
 
@@ -74,7 +76,11 @@ public class SnmpNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, SnmpNotifier.class);
             upgradeMonitoringService(config, notifierName, SnmpNotifier.class);
             upgradeHealthCheckService(config, notifierName, SnmpNotifier.class);
-            upgradeAdminAuditService(config, notifierName, SnmpNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }

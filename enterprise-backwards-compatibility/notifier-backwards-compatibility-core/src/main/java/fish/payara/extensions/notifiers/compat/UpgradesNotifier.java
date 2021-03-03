@@ -38,50 +38,27 @@
  * holder.
  */
 
-package fish.payara.extensions.notifiers.compat.cdieventbus;
+package fish.payara.extensions.notifiers.compat;
 
-import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
-import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
-import org.glassfish.api.StartupRunLevel;
-import org.glassfish.hk2.runlevel.RunLevel;
-import org.jvnet.hk2.annotations.Service;
+import fish.payara.extensions.notifiers.compat.config.Notifier;
+import org.glassfish.hk2.api.Metadata;
+
+import javax.inject.Qualifier;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Service that upgrades legacy config on server start.
- *
- * @author Andrew Pielage
+ * Qualifier used to mark and add metadata to the upgrade services implementing the {@link LegacyNotifierUpgradeService}
+ * contract.
  */
-@Service
-@RunLevel(StartupRunLevel.VAL)
-@UpgradesNotifier(CdiEventBusNotifier.class)
-public class CdiEventBusUpgradeService extends LegacyNotifierUpgradeService {
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface UpgradesNotifier {
 
-    private static final String notifierName = "cdieventbus-notifier";
-
-    @Override
-    public void postConstruct() {
-        for (Config config : configs.getConfig()) {
-            // First up, get the notifier configuration for each config
-            NotificationServiceConfiguration notificationServiceConfiguration = config.getExtensionByType(
-                    NotificationServiceConfiguration.class);
-            // If there is no notifier configuration whatsoever - just exit out. This **should** be an edge case -
-            // default config tags for the notification service have existed for a long time
-            if (notificationServiceConfiguration == null) {
-                continue;
-            }
-
-            // Upgrade each of the services that publish to notifiers
-            upgradeRequestTracingService(config, notifierName, CdiEventBusNotifier.class);
-            upgradeMonitoringService(config, notifierName, CdiEventBusNotifier.class);
-            upgradeHealthCheckService(config, notifierName, CdiEventBusNotifier.class);
-        }
-    }
-
-    @Override
-    public String getNewNotifierName() {
-        return notifierName;
-    }
+    @Metadata(LegacyNotifierUpgradeService.UPGRADES_NOTIFIER_METADATA)
+    Class<? extends Notifier> value();
 
 }

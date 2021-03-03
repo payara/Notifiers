@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.slack;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class SlackNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(SlackNotifier.class)
+public class SlackNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "slack-notifier";
 
@@ -74,7 +76,11 @@ public class SlackNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, SlackNotifier.class);
             upgradeMonitoringService(config, notifierName, SlackNotifier.class);
             upgradeHealthCheckService(config, notifierName, SlackNotifier.class);
-            upgradeAdminAuditService(config, notifierName, SlackNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }

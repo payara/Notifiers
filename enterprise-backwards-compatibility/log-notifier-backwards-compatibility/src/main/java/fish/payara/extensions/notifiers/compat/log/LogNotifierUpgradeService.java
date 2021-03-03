@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.log;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class LogNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(LogNotifier.class)
+public class LogNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "log-notifier";
 
@@ -74,7 +76,11 @@ public class LogNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, LogNotifier.class);
             upgradeMonitoringService(config, notifierName, LogNotifier.class);
             upgradeHealthCheckService(config, notifierName, LogNotifier.class);
-            upgradeAdminAuditService(config, notifierName, LogNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }
