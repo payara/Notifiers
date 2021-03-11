@@ -132,7 +132,7 @@ holder.
                           label="$resource{i18nxn.notifier.xmpp.configuration.portLabel}"  
                           helpText="$resource{i18nxn.notifier.xmpp.configuration.portLabelHelpText}">
                 <sun:textField id="portField" columns="$int{75}" maxLength="255" styleClass="port"
-                               text="#{pageSession.valueMap['port']}" />
+                               text="#{pageSession.valueMap['xmppPort']}" />
             </sun:property>
             <sun:property id="serviceNameProp" labelAlign="left" noWrap="#{true}" overlapLabel="#{false}" 
                           label="$resource{i18nxn.notifier.xmpp.configuration.serviceNameLabel}"  

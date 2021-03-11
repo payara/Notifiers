@@ -74,7 +74,7 @@ public class SetXmppNotifierConfigurationCommand extends BaseSetNotifierConfigur
     @Param(name = "hostName")
     private String hostName;
 
-    @Param(name = "port", defaultValue = "5222", optional = true)
+    @Param(name = "xmppPort", defaultValue = "5222", optional = true, alias = "xmppport")
     private Integer port;
 
     @Param(name = "serviceName")

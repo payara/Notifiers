@@ -79,7 +79,7 @@ public class GetSnmpNotifierConfigurationCommand extends BaseGetNotifierConfigur
             map.put("OID", configuration.getOid());
             map.put("Version", configuration.getVersion());
             map.put("Host Name", configuration.getHost());
-            map.put("Port", configuration.getPort());
+            map.put("SNMP Port", configuration.getPort());
         }
 
         return map;
