@@ -137,7 +137,7 @@ public class SnmpNotificationConfigurer extends BaseSetNotifierConfigurationComm
         }
 
         if (port != null) {
-            parameterMap.insert("port", port.toString());
+            parameterMap.insert("snmpPort", port.toString());
         }
 
         try {

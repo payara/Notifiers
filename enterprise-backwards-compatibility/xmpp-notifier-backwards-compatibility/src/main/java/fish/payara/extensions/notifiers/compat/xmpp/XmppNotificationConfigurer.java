@@ -132,7 +132,7 @@ public class XmppNotificationConfigurer extends BaseSetNotifierConfigurationComm
         }
 
         if (port != null) {
-            parameterMap.insert("port", port.toString());
+            parameterMap.insert("xmppPort", port.toString());
         }
 
         if (StringUtils.ok(serviceName)) {
