@@ -83,7 +83,7 @@ public class SetSnmpNotifierConfigurationCommand extends BaseSetNotifierConfigur
     @Param(name = "hostName")
     private String hostName;
 
-    @Param(name = "port", defaultValue = "162", optional = true)
+    @Param(name = "snmpPort", defaultValue = "162", optional = true, alias = "snmpport")
     private Integer port;
 
     @Override

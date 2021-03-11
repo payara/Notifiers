@@ -76,7 +76,7 @@ public class GetXmppNotifierConfigurationCommand extends BaseGetNotifierConfigur
 
         if (configuration != null) {
             map.put("Host Name", configuration.getHost());
-            map.put("Port", configuration.getPort());
+            map.put("XMPP Port", configuration.getPort());
             map.put("Service Name", configuration.getServiceName());
             map.put("Username", configuration.getUsername());
             map.put("Password", configuration.getPassword());
