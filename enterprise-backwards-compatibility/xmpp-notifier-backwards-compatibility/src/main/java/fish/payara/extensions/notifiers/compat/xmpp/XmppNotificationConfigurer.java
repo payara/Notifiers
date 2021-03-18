@@ -84,7 +84,7 @@ public class XmppNotificationConfigurer extends BaseSetNotifierConfigurationComm
     @Param(name = "hostName")
     private String hostName;
 
-    @Param(name = "port", defaultValue = "5222", optional = true)
+    @Param(name = "xmppPort", defaultValue = "5222", optional = true, alias = "xmppport")
     private Integer port;
 
     @Param(name = "serviceName")
@@ -132,7 +132,7 @@ public class XmppNotificationConfigurer extends BaseSetNotifierConfigurationComm
         }
 
         if (port != null) {
-            parameterMap.insert("port", port.toString());
+            parameterMap.insert("xmppPort", port.toString());
         }
 
         if (StringUtils.ok(serviceName)) {

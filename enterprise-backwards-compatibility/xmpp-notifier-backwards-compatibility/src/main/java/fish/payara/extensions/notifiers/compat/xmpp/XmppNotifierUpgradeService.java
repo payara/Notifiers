@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.xmpp;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class XmppNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(XmppNotifier.class)
+public class XmppNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "xmpp-notifier";
 
@@ -74,7 +76,11 @@ public class XmppNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, XmppNotifier.class);
             upgradeMonitoringService(config, notifierName, XmppNotifier.class);
             upgradeHealthCheckService(config, notifierName, XmppNotifier.class);
-            upgradeAdminAuditService(config, notifierName, XmppNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }

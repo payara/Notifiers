@@ -49,7 +49,7 @@
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>5.26.0</payara.version>
+        <payara.version>5.27.0-SNAPSHOT</payara.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
@@ -318,6 +318,17 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>payara-nexus-enterprise-snapshots</id>
+            <name>Payara Enterprise Snapshots</name>
+            <url>https://nexus.payara.fish/repository/payara-enterprise-snapshots-private</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
     </repositories>
 
     <!-- Used for the deploy phase -->
@@ -347,8 +358,8 @@
                     <url>https://nexus.payara.fish/repository/payara-enterprise-artifacts-private/</url>
                 </repository>
                 <snapshotRepository>
-                    <id>payara-nexus-snapshots</id>
-                    <url>https://nexus.payara.fish/repository/payara-snapshots/</url>
+                    <id>payara-nexus-enterprise-snapshots</id>
+                    <url>https://nexus.payara.fish/repository/payara-enterprise-snapshots-private/</url>
                 </snapshotRepository>
             </distributionManagement>
         </profile>

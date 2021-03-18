@@ -43,15 +43,13 @@ package fish.payara.extensions.notifiers.compat;
 import com.sun.enterprise.config.serverbeans.Config;
 import com.sun.enterprise.config.serverbeans.Configs;
 import com.sun.enterprise.util.StringUtils;
-import fish.payara.audit.AdminAuditConfiguration;
 import fish.payara.extensions.notifiers.compat.config.Notifier;
-import fish.payara.internal.notification.PayaraNotifierConfiguration;
-import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import fish.payara.jmx.monitoring.configuration.MonitoringServiceConfiguration;
 import fish.payara.nucleus.healthcheck.configuration.HealthCheckServiceConfiguration;
 import fish.payara.nucleus.requesttracing.configuration.RequestTracingServiceConfiguration;
 import org.glassfish.api.admin.config.ConfigurationUpgrade;
 import org.glassfish.hk2.api.PostConstruct;
+import org.jvnet.hk2.annotations.Contract;
 import org.jvnet.hk2.config.ConfigSupport;
 import org.jvnet.hk2.config.TransactionFailure;
 
@@ -61,11 +59,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Base class that the notifier upgrade services pull from, containing generic methods shared by all.
+ * Contract for notifier upgrade services, containing generic methods shared by all.
  *
  * @author Andrew Pielage
  */
-public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade, PostConstruct {
+@Contract
+public abstract class LegacyNotifierUpgradeService implements ConfigurationUpgrade, PostConstruct {
+
+    public static final String UPGRADES_NOTIFIER_METADATA = "UpgradesNotifier";
 
     @Inject
     protected Configs configs;
@@ -73,41 +74,10 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
     @Inject
     protected Logger logger;
 
-    /**
-     * Retrieves the {@link PayaraNotifierConfiguration} for a given {@link NotificationServiceConfiguration}.
-     *
-     * @param notificationServiceConfiguration The {@link NotificationServiceConfiguration} to get config from
-     * @param notifierConfigurationClass       The {@link PayaraNotifierConfiguration} to get
-     * @param <T>                              The type of {@link PayaraNotifierConfiguration} to get
-     * @return The {@link PayaraNotifierConfiguration} for the specified {@link NotificationServiceConfiguration}, or
-     * null if it can't be found or created
-     */
-    protected <T extends PayaraNotifierConfiguration> T getNotifierConfiguration(
-            NotificationServiceConfiguration notificationServiceConfiguration, Class<T> notifierConfigurationClass) {
-        T notifierConfiguration = notificationServiceConfiguration.getNotifierConfigurationByType(
-                notifierConfigurationClass);
-        // Will be null if no default config tags present
-        if (notifierConfiguration == null) {
-            try {
-                // Create a transaction around the notifier config we want to add the element to, grab it's list
-                // of notifiers, and add a new child element to it
-                ConfigSupport.apply(notificationServiceConfigurationProxy -> {
-                    notificationServiceConfigurationProxy.getNotifierConfigurationList().add(
-                            notificationServiceConfigurationProxy.createChild(notifierConfigurationClass));
-                    return notificationServiceConfigurationProxy;
-                }, notificationServiceConfiguration);
-            } catch (TransactionFailure transactionFailure) {
-                logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
-                return null;
-            }
+    public abstract String getNewNotifierName();
 
-            // Get the newly created config element
-            notifierConfiguration = notificationServiceConfiguration.getNotifierConfigurationByType(
-                    notifierConfigurationClass);
-        }
-
-        // Could still be null!
-        return notifierConfiguration;
+    public Class<? extends Notifier> getUpgradeNotifierClass() {
+        return getClass().getAnnotation(UpgradesNotifier.class).value();
     }
 
     /**
@@ -266,60 +236,6 @@ public abstract class BaseNotifierUpgradeService implements ConfigurationUpgrade
                     healthCheckServiceConfigurationProxy.getLegacyNotifierList().remove(notifier);
                     return healthCheckServiceConfigurationProxy;
                 }, healthCheckServiceConfiguration);
-            } catch (TransactionFailure transactionFailure) {
-                logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
-            }
-        }
-    }
-
-    /**
-     * Upgrades any configured legacy notifiers for a given {@link AdminAuditConfiguration}, before removing
-     * the legacy config. If there is existing "upgraded" config, it does not override it.
-     *
-     * @param config        The {@link Config} to upgrade the {@link AdminAuditConfiguration} of.
-     * @param notifierName  The name of the notifier, corresponding to its XML tag in the domain.xml
-     * @param notifierClass The legacy {@link Notifier} to upgrade
-     * @param <T>           The type of legacy {@link Notifier} to upgrade
-     */
-    protected <T extends Notifier> void upgradeAdminAuditService(Config config, String notifierName,
-            Class<T> notifierClass) {
-        AdminAuditConfiguration adminAuditConfiguration = config.getExtensionByType(
-                AdminAuditConfiguration.class);
-
-        if (adminAuditConfiguration == null) {
-            logger.log(Level.WARNING, "Could not find admin audit service configuration to upgrade for config: {0}",
-                    config.getName());
-            return;
-        }
-
-        T notifier = adminAuditConfiguration.getLegacyNotifierByType(notifierClass);
-        if (notifier == null) {
-            // If no config found, nothing to do!
-            return;
-        }
-
-        if (StringUtils.ok(notifier.getEnabled()) && Boolean.valueOf(notifier.getEnabled())) {
-            // Since this is enabled, there might be something for us to do.
-            // Get the new notifier config list to see if this notifier is enabled - we don't want to override an
-            // existing value
-            List<String> notifiers = adminAuditConfiguration.getNotifierList();
-            if (!notifiers.contains(notifierName)) {
-                // No existing config to override, so let's migrate old to new
-                try {
-                    ConfigSupport.apply(adminAuditConfigurationProxy -> {
-                        adminAuditConfigurationProxy.getNotifierList().add(notifierName);
-                        return adminAuditConfigurationProxy;
-                    }, adminAuditConfiguration);
-                } catch (TransactionFailure transactionFailure) {
-                    logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
-                }
-            }
-            // And finally, delete the legacy config
-            try {
-                ConfigSupport.apply(adminAuditConfigurationProxy -> {
-                    adminAuditConfigurationProxy.getLegacyNotifierList().remove(notifier);
-                    return adminAuditConfigurationProxy;
-                }, adminAuditConfiguration);
             } catch (TransactionFailure transactionFailure) {
                 logger.log(Level.WARNING, "Failed to remove legacy notifier configuration", transactionFailure);
             }

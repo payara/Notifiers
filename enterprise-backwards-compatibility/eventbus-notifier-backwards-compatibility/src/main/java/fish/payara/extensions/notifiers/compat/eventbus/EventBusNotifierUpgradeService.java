@@ -41,7 +41,8 @@
 package fish.payara.extensions.notifiers.compat.eventbus;
 
 import com.sun.enterprise.config.serverbeans.Config;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
@@ -54,7 +55,8 @@ import org.jvnet.hk2.annotations.Service;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class EventBusNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(EventBusNotifier.class)
+public class EventBusNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "eventbus-notifier";
 
@@ -74,7 +76,11 @@ public class EventBusNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, EventBusNotifier.class);
             upgradeMonitoringService(config, notifierName, EventBusNotifier.class);
             upgradeHealthCheckService(config, notifierName, EventBusNotifier.class);
-            upgradeAdminAuditService(config, notifierName, EventBusNotifier.class);
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 }

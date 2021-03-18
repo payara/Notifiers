@@ -41,7 +41,8 @@ package fish.payara.extensions.notifiers.compat.email;
 
 import com.sun.enterprise.config.serverbeans.Config;
 import com.sun.enterprise.util.StringUtils;
-import fish.payara.extensions.notifiers.compat.BaseNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.LegacyNotifierUpgradeService;
+import fish.payara.extensions.notifiers.compat.UpgradesNotifier;
 import fish.payara.extensions.notifiers.email.EmailNotifierConfiguration;
 import fish.payara.internal.notification.admin.NotificationServiceConfiguration;
 import org.glassfish.api.StartupRunLevel;
@@ -59,7 +60,8 @@ import java.util.logging.Level;
  */
 @Service
 @RunLevel(StartupRunLevel.VAL)
-public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
+@UpgradesNotifier(EmailNotifier.class)
+public class EmailNotifierUpgradeService extends LegacyNotifierUpgradeService {
 
     private static final String notifierName = "email-notifier";
 
@@ -76,8 +78,8 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
             }
 
             // Next up, get the email notifier configuration for this config, creating default config tags if required
-            EmailNotifierConfiguration emailNotifierConfiguration = getNotifierConfiguration(
-                    notificationServiceConfiguration, EmailNotifierConfiguration.class);
+            EmailNotifierConfiguration emailNotifierConfiguration = getEmailNotifierConfiguration(
+                    notificationServiceConfiguration);
             // If we don't find the config or fail to create one, exit out - something has gone fundamentally wrong
             if (emailNotifierConfiguration == null) {
                 logger.log(Level.WARNING,
@@ -92,8 +94,42 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
             upgradeRequestTracingService(config, notifierName, EmailNotifier.class);
             upgradeMonitoringService(config, notifierName, EmailNotifier.class);
             upgradeHealthCheckService(config, notifierName, EmailNotifier.class);
-            upgradeAdminAuditService(config, notifierName, EmailNotifier.class);
         }
+    }
+
+    /**
+     * Retrieves the {@link EmailNotifierConfiguration} for a given {@link NotificationServiceConfiguration}.
+     *
+     * @param notificationServiceConfiguration The {@link NotificationServiceConfiguration} to get config from
+     * @return The {@link EmailNotifierConfiguration} for the specified {@link NotificationServiceConfiguration}, or
+     * null if it can't be found or created
+     */
+    protected EmailNotifierConfiguration getEmailNotifierConfiguration(
+            NotificationServiceConfiguration notificationServiceConfiguration) {
+        EmailNotifierConfiguration emailNotifierConfiguration = notificationServiceConfiguration
+                .getNotifierConfigurationByType(EmailNotifierConfiguration.class);
+        // Will be null if no default config tags present
+        if (emailNotifierConfiguration == null) {
+            try {
+                // Create a transaction around the notifier config we want to add the element to, grab it's list
+                // of notifiers, and add a new child element to it
+                ConfigSupport.apply(notificationServiceConfigurationProxy -> {
+                    notificationServiceConfigurationProxy.getNotifierConfigurationList().add(
+                            notificationServiceConfigurationProxy.createChild(EmailNotifierConfiguration.class));
+                    return notificationServiceConfigurationProxy;
+                }, notificationServiceConfiguration);
+            } catch (TransactionFailure transactionFailure) {
+                logger.log(Level.WARNING, "Failed to upgrade legacy notifier configuration", transactionFailure);
+                return null;
+            }
+
+            // Get the newly created config element
+            emailNotifierConfiguration = notificationServiceConfiguration.getNotifierConfigurationByType(
+                    EmailNotifierConfiguration.class);
+        }
+
+        // Could still be null!
+        return emailNotifierConfiguration;
     }
 
     private void upgradeNotifierService(EmailNotifierConfiguration emailNotifierConfiguration) {
@@ -126,6 +162,11 @@ public class EmailNotifierUpgradeService extends BaseNotifierUpgradeService {
                         "Failed to remove legacy notifier configuration", transactionFailure);
             }
         }
+    }
+
+    @Override
+    public String getNewNotifierName() {
+        return notifierName;
     }
 
 }

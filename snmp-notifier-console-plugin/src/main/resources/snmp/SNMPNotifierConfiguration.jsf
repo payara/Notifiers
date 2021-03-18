@@ -143,7 +143,7 @@ holder.
                           label="$resource{i18nsnn.notifier.snmp.configuration.portLabel}"  
                           helpText="$resource{i18nsnn.notifier.snmp.configuration.portLabelHelpText}">
                 <sun:textField id="portField" columns="$int{75}" maxLength="255" styleClass="port"
-                               text="#{pageSession.valueMap['port']}" />
+                               text="#{pageSession.valueMap['snmpPort']}" />
             </sun:property>
         </sun:propertySheetSection>
     </sun:propertySheet>
