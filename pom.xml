@@ -2,7 +2,7 @@
 <!--
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-  Copyright (c) [2020] Payara Foundation and/or its affiliates. All rights reserved.
+  Copyright (c) [2020-2021] Payara Foundation and/or its affiliates. All rights reserved.
 
   The contents of this file are subject to the terms of either the GNU
   General Public License Version 2 only ("GPL") or the Common Development
@@ -100,6 +100,12 @@
                 <artifactId>jakarta.jakartaee-api</artifactId>
                 <version>8.0.0</version>
                 <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>fish.payara.api</groupId>
+                <artifactId>payara-api</artifactId>
+                <version>${payara.version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -260,6 +266,11 @@
                         <outputDirectory>${project.build.directory}</outputDirectory>
                     </configuration>
                 </plugin>
+                <plugin>
+                   <groupId>org.apache.maven.plugins</groupId>
+                   <artifactId>maven-resources-plugin</artifactId>
+                   <version>2.4</version>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -299,4 +310,16 @@
             <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
         </repository>
     </distributionManagement>
+    <profiles>
+        <profile>
+            <id>java11</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <modules>
+                <module>jfr-notifier-core</module>
+                <module>jfr-notifier-console-plugin</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
