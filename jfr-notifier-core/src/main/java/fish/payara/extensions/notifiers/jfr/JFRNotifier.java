@@ -67,13 +67,15 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
             }
         }
 
-        String[] category = {"Payara", notification.getSubject()};
+        String category = defineCategory(notification);
+        String name = defineName(notification);
+        String[] categories = {"Payara", category};
         List<AnnotationElement> eventAnnotations = new ArrayList<>();
 
-        eventAnnotations.add(new AnnotationElement(Name.class, generateFlightRecorderNameValue(notification)));
+        eventAnnotations.add(new AnnotationElement(Name.class, name));
         eventAnnotations.add(new AnnotationElement(Label.class, "Payara JFR Notification"));
         eventAnnotations.add(new AnnotationElement(Description.class, "JFR Notification"));
-        eventAnnotations.add(new AnnotationElement(Category.class, category));
+        eventAnnotations.add(new AnnotationElement(Category.class, categories));
 
         EventFactory eventFactory = EventFactory.create(eventAnnotations, fields);
 
@@ -86,7 +88,7 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
         }
         if (notification.getData() instanceof RequestTracingNotificationData) {
             RequestTracingNotificationData data = (RequestTracingNotificationData) notification.getData();
-            handleRequestTracingData(eventFactory, notification.getServerName(), data);
+            handleRequestTracingData(eventFactory, notification.getServerName(), data, notification.getSubject());
             knownData = true;
         }
         if (!knownData) {
@@ -98,11 +100,28 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
 
     }
 
-    private void handleRequestTracingData(EventFactory eventFactory, String serverName, RequestTracingNotificationData data) {
+    private String defineCategory(PayaraNotification notification) {
+        String result = notification.getSubject();
+        if (notification.getData() instanceof RequestTracingNotificationData) {
+            result = "RequestTracing";
+        }
+        return result;
+    }
+
+    private String defineName(PayaraNotification notification) {
+        String result = notification.getSubject();
+        if (notification.getData() instanceof RequestTracingNotificationData) {
+            result = "RequestTracing";
+        }
+        return result;
+    }
+
+    private void handleRequestTracingData(EventFactory eventFactory, String serverName
+            , RequestTracingNotificationData data, String summary) {
         Event event = eventFactory.newEvent();
         event.set(0, serverName);
 
-        event.set(1, "REQUEST TRACE");
+        event.set(1, summary);
         event.set(2, data.getRequestTrace().toString());
         event.commit();
     }
@@ -131,6 +150,8 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
         // This needs to be a valid Java identifier
         suffix = suffix.replaceAll(" ", "_")
                 .replaceAll(":", "_")
+                .replaceAll("\\(", "")
+                .replaceAll("\\)", "")
                 .replaceAll("-", "_");
         return "payara." + suffix;
     }
