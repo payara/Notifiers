@@ -91,6 +91,11 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
             handleRequestTracingData(eventFactory, notification.getServerName(), data, notification.getSubject());
             knownData = true;
         }
+        if (notification.getData() instanceof String) {
+            String data = (String) notification.getData();
+            handleAuditData(eventFactory, notification.getServerName(), data, notification.getSubject());
+            knownData = true;
+        }
         if (!knownData) {
             String dataClassName = notification.getData() == null ? "null" : notification.getData().getClass().getName();
             logger.warning(String.format("Unknown Notification Data received; data class name '%s', message %s"
@@ -103,7 +108,7 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
     private String defineCategory(PayaraNotification notification) {
         String result = notification.getSubject();
         if (notification.getData() instanceof RequestTracingNotificationData) {
-            result = "RequestTracing";
+            result = "Request Tracing";
         }
         return result;
     }
@@ -113,7 +118,7 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
         if (notification.getData() instanceof RequestTracingNotificationData) {
             result = "RequestTracing";
         }
-        return result;
+        return result.replaceAll(" ","");
     }
 
     private void handleRequestTracingData(EventFactory eventFactory, String serverName
@@ -123,6 +128,16 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
 
         event.set(1, summary);
         event.set(2, data.getRequestTrace().toString());
+        event.commit();
+    }
+
+    private void handleAuditData(EventFactory eventFactory, String serverName
+            , String data, String summary) {
+        Event event = eventFactory.newEvent();
+        event.set(0, serverName);
+
+        event.set(1, summary);
+        event.set(2, data);
         event.commit();
     }
 
@@ -143,17 +158,6 @@ public class JFRNotifier extends PayaraConfiguredNotifier<JFRNotifierConfigurati
                 event.commit();
             }
         }
-    }
-
-    private String generateFlightRecorderNameValue(PayaraNotification notification) {
-        String suffix = notification.getSubject();
-        // This needs to be a valid Java identifier
-        suffix = suffix.replaceAll(" ", "_")
-                .replaceAll(":", "_")
-                .replaceAll("\\(", "")
-                .replaceAll("\\)", "")
-                .replaceAll("-", "_");
-        return "payara." + suffix;
     }
 
     @Override
