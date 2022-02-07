@@ -1,5 +1,5 @@
 <!--
-Copyright (c) [2020] Payara Foundation and/or its affiliates. All rights reserved.
+Copyright (c) [2020-2022] Payara Foundation and/or its affiliates. All rights reserved.
 
 The contents of this file are subject to the terms of either the GNU
 General Public License Version 2 only ("GPL") or the Common Development
@@ -87,6 +87,7 @@ holder.
                         mapPut(map="#{pageSession.valueMap}" key="enabled" value="#{pageSession.enabledSelected}");
 						mapPut(map="#{pageSession.valueMap}" key="noisy" value="#{pageSession.noisy}");
                         mapPut(map="#{pageSession.valueMap}" key="dynamic" value="#{pageSession.dynamic}");
+                        mapPut(map="#{pageSession.valueMap}" key="id" value="#{pageSession.webhookUrl}");
                         prepareSuccessfulMsg();
                         gf.updateEntity(endpoint="#{sessionScope.NOTIFICATION_CONFIG_URL}/set-teams-notifier-configuration" 
                                 attrs="#{pageSession.valueMap}" convertToFalse="#{pageSession.convertToFalseList}");
@@ -118,7 +119,7 @@ holder.
                           label="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabel}"  
                           helpText="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabelHelpText}">
                 <sun:textField id="webhookUrlField" columns="$int{75}" maxLength="512" 
-                               text="#{pageSession.valueMap['webhookUrl']}" styleClass="required"  
+                               text="#{pageSession.webhookUrl}" styleClass="required"
                                required="#{true}"/>
             </sun:property>
         </sun:propertySheetSection>
