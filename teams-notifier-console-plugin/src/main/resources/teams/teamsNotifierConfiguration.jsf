@@ -61,7 +61,8 @@ holder.
 			setPageSessionAttribute(key="noisy", value="true");
 		}	
         setPageSessionAttribute(key="dynamic", value="true");
-    /> 
+        setPageSessionAttribute(key="webhookUrl", value="#{pageSession.valueMap['webhookUrl']}");
+    />
 </event>
 <sun:form id="propertyForm">
 #include "/common/shared/alertMsg_1.inc"
