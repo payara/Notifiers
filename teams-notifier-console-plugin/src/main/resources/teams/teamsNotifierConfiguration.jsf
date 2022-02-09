@@ -44,7 +44,8 @@ holder.
 <!composition template="/templates/default.layout"  guiTitle="$resource{i18nemn.notifier.teams.configuration.pageTitle}"  >
 <!define name="content">
 <event>
-    <!beforeCreate 
+    <!beforeCreate
+        setPageSessionAttribute(key="onlyUseAttrs", value={"id", "enabled", "noisy", "dynamic", "target"});
         getRequestValue(key="configName" value="#{pageSession.configName}" );
         createMap(result="#{pageSession.attrsMap}")
         mapPut(map="#{pageSession.attrsMap}" key="target" value="#{pageSession.configName}");
@@ -61,7 +62,6 @@ holder.
 			setPageSessionAttribute(key="noisy", value="true");
 		}	
         setPageSessionAttribute(key="dynamic", value="true");
-        setPageSessionAttribute(key="webhookUrl", value="#{pageSession.valueMap['webhookUrl']}");
     />
 </event>
 <sun:form id="propertyForm">
@@ -88,10 +88,10 @@ holder.
                         mapPut(map="#{pageSession.valueMap}" key="enabled" value="#{pageSession.enabledSelected}");
 						mapPut(map="#{pageSession.valueMap}" key="noisy" value="#{pageSession.noisy}");
                         mapPut(map="#{pageSession.valueMap}" key="dynamic" value="#{pageSession.dynamic}");
-                        mapPut(map="#{pageSession.valueMap}" key="id" value="#{pageSession.webhookUrl}");
+                        mapPut(map="#{pageSession.valueMap}" key="id" value="#{pageSession.valueMap['webhookUrl']}");
                         prepareSuccessfulMsg();
                         gf.updateEntity(endpoint="#{sessionScope.NOTIFICATION_CONFIG_URL}/set-teams-notifier-configuration" 
-                                attrs="#{pageSession.valueMap}" convertToFalse="#{pageSession.convertToFalseList}");
+                                attrs="#{pageSession.valueMap}" onlyUseAttrs="#{pageSession.onlyUseAttrs}" convertToFalse="#{pageSession.convertToFalseList}");
                         />
                 </sun:button>
             </sun:panelGroup>
@@ -120,7 +120,7 @@ holder.
                           label="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabel}"  
                           helpText="$resource{i18nemn.notifier.teams.configuration.webhookUrlLabelHelpText}">
                 <sun:textField id="webhookUrlField" columns="$int{75}" maxLength="512" 
-                               text="#{pageSession.webhookUrl}" styleClass="required"
+                               text="#{pageSession.valueMap['webhookUrl']}" styleClass="required"  
                                required="#{true}"/>
             </sun:property>
         </sun:propertySheetSection>
