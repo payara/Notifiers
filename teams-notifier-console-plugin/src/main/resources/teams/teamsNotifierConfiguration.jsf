@@ -1,5 +1,5 @@
 <!--
-Copyright (c) [2020] Payara Foundation and/or its affiliates. All rights reserved.
+Copyright (c) [2020-2022] Payara Foundation and/or its affiliates. All rights reserved.
 
 The contents of this file are subject to the terms of either the GNU
 General Public License Version 2 only ("GPL") or the Common Development
@@ -44,7 +44,8 @@ holder.
 <!composition template="/templates/default.layout"  guiTitle="$resource{i18nemn.notifier.teams.configuration.pageTitle}"  >
 <!define name="content">
 <event>
-    <!beforeCreate 
+    <!beforeCreate
+        setPageSessionAttribute(key="onlyUseAttrs", value={"id", "enabled", "noisy", "dynamic", "target"});
         getRequestValue(key="configName" value="#{pageSession.configName}" );
         createMap(result="#{pageSession.attrsMap}")
         mapPut(map="#{pageSession.attrsMap}" key="target" value="#{pageSession.configName}");
@@ -61,7 +62,7 @@ holder.
 			setPageSessionAttribute(key="noisy", value="true");
 		}	
         setPageSessionAttribute(key="dynamic", value="true");
-    /> 
+    />
 </event>
 <sun:form id="propertyForm">
 #include "/common/shared/alertMsg_1.inc"
@@ -87,9 +88,10 @@ holder.
                         mapPut(map="#{pageSession.valueMap}" key="enabled" value="#{pageSession.enabledSelected}");
 						mapPut(map="#{pageSession.valueMap}" key="noisy" value="#{pageSession.noisy}");
                         mapPut(map="#{pageSession.valueMap}" key="dynamic" value="#{pageSession.dynamic}");
+                        mapPut(map="#{pageSession.valueMap}" key="id" value="#{pageSession.valueMap['webhookUrl']}");
                         prepareSuccessfulMsg();
                         gf.updateEntity(endpoint="#{sessionScope.NOTIFICATION_CONFIG_URL}/set-teams-notifier-configuration" 
-                                attrs="#{pageSession.valueMap}" convertToFalse="#{pageSession.convertToFalseList}");
+                                attrs="#{pageSession.valueMap}" onlyUseAttrs="#{pageSession.onlyUseAttrs}" convertToFalse="#{pageSession.convertToFalseList}");
                         />
                 </sun:button>
             </sun:panelGroup>
