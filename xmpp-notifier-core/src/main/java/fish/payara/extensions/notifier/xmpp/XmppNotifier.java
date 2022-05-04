@@ -1,7 +1,7 @@
 /*
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
  *
- * Copyright (c) [2016-2020] Payara Foundation and/or its affiliates. All rights reserved.
+ * Copyright (c) [2016-2022] Payara Foundation and/or its affiliates. All rights reserved.
  *
  * The contents of this file are subject to the terms of either the GNU
  * General Public License Version 2 only ("GPL") or the Common Development
@@ -39,10 +39,8 @@
  */
 package fish.payara.extensions.notifier.xmpp;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import fish.payara.internal.notification.PayaraConfiguredNotifier;
+import fish.payara.internal.notification.PayaraNotification;
 import org.glassfish.api.StartupRunLevel;
 import org.glassfish.hk2.runlevel.RunLevel;
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -54,9 +52,13 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jvnet.hk2.annotations.Service;
+import org.jxmpp.jid.impl.JidCreate;
+import org.jxmpp.jid.parts.Resourcepart;
+import org.jxmpp.stringprep.XmppStringprepException;
 
-import fish.payara.internal.notification.PayaraConfiguredNotifier;
-import fish.payara.internal.notification.PayaraNotification;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author mertcaliskan
@@ -79,11 +81,11 @@ public class XmppNotifier extends PayaraConfiguredNotifier<XmppNotifierConfigura
         try {
             MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(connection);
             MultiUserChat multiUserChat = manager
-                    .getMultiUserChat(configuration.getRoomId() + "@" + configuration.getServiceName());
+                    .getMultiUserChat(JidCreate.entityBareFrom(configuration.getRoomId() + "@" + configuration.getServiceName()));
 
             if (multiUserChat != null) {
                 if (!multiUserChat.isJoined()) {
-                    multiUserChat.join(configuration.getUsername(), configuration.getPassword());
+                    multiUserChat.join(Resourcepart.from(configuration.getUsername()), configuration.getPassword());
                 }
 
                 final String body = event.getMessage();
@@ -96,7 +98,7 @@ public class XmppNotifier extends PayaraConfiguredNotifier<XmppNotifierConfigura
                 multiUserChat.sendMessage(message);
             }
             LOGGER.log(Level.FINE, "Message sent successfully");
-        } catch (XMPPException | SmackException e) {
+        } catch (XMPPException | SmackException | XmppStringprepException | InterruptedException e) {
             LOGGER.log(Level.SEVERE, "Error occurred while sending message to room", e);
         }
     }
@@ -108,7 +110,7 @@ public class XmppNotifier extends PayaraConfiguredNotifier<XmppNotifierConfigura
                     .setSecurityMode(Boolean.valueOf(configuration.getSecurityDisabled()) ?
                             ConnectionConfiguration.SecurityMode.disabled :
                             ConnectionConfiguration.SecurityMode.required)
-                    .setServiceName(configuration.getServiceName())
+                    .setXmppDomain(configuration.getServiceName())
                     .setHost(configuration.getHost())
                     .setPort(Integer.valueOf(configuration.getPort()))
                     .build();
@@ -128,6 +130,8 @@ public class XmppNotifier extends PayaraConfiguredNotifier<XmppNotifierConfigura
             LOGGER.log(Level.SEVERE, "Error occurred on Smack protocol level while connecting host", e);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "IO Error occurred while connecting host", e);
+        } catch (InterruptedException e) {
+            LOGGER.log(Level.SEVERE, "InterruptedException occurred while connecting host", e);
         }
     }
 

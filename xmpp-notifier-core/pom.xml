@@ -2,7 +2,7 @@
 <!--
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-  Copyright (c) [2020] Payara Foundation and/or its affiliates. All rights reserved.
+  Copyright (c) [2020-2022] Payara Foundation and/or its affiliates. All rights reserved.
 
   The contents of this file are subject to the terms of either the GNU
   General Public License Version 2 only ("GPL") or the Common Development
@@ -54,7 +54,7 @@
     <name>XMPP Notifier Implementation</name>
 
     <properties>
-        <smack.version>4.1.9</smack.version>
+        <smack.version>4.3.4</smack.version>
         <xpp3.version>1.1.4c_7</xpp3.version>
     </properties>
 
