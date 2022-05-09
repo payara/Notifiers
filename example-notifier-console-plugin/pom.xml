@@ -44,11 +44,10 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>1.2-enterprise-SNAPSHOT</version>
+        <version>1.1-enterprise-SNAPSHOT</version>
     </parent>
 
     <artifactId>example-notifier-console-plugin</artifactId>
-    <version>1.1-enterprise-SNAPSHOT</version>
     <packaging>glassfish-jar</packaging>
 
     <name>Example Notifier Console Plugin</name>
