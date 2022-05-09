@@ -44,7 +44,7 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>1.0.1-enterprise</version>
+        <version>1.1-enterprise-SNAPSHOT</version>
     </parent>
 
     <artifactId>email-notifier-console-plugin-l10n</artifactId>
