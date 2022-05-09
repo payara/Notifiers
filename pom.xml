@@ -43,7 +43,7 @@
 
     <groupId>fish.payara.extensions.notifiers</groupId>
     <artifactId>notifiers-parent</artifactId>
-    <version>1.1-enterprise</version>
+    <version>1.2-enterprise-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Notifiers Parent</name>
@@ -56,7 +56,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <payara-xmpp-notifier-core-plugin.version>1.1-enterprise</payara-xmpp-notifier-core-plugin.version>
+        <payara-xmpp-notifier-core-plugin.version>1.2-enterprise-SNAPSHOT</payara-xmpp-notifier-core-plugin.version>
     </properties>
 
     <modules>
