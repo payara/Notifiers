@@ -62,7 +62,7 @@
         <dependency>
             <groupId>fish.payara.extensions.notifiers</groupId>
             <artifactId>xmpp-notifier-core</artifactId>
-            <version>${payara-xmpp-notifier-core-plugin.version}</version>
+            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
