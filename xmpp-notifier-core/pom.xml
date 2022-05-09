@@ -48,7 +48,7 @@
     </parent>
 
     <artifactId>xmpp-notifier-core</artifactId>
-    <version>1.2-enterprise-SNAPSHOT</version>
+    <version>1.1-enterprise-SNAPSHOT</version>
     <packaging>glassfish-jar</packaging>
 
     <name>XMPP Notifier Implementation</name>
