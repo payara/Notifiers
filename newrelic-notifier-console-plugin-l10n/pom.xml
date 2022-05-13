@@ -44,11 +44,11 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>1.1-enterprise</version>
+        <version>1.2-enterprise-SNAPSHOT</version>
     </parent>
 
     <artifactId>newrelic-notifier-console-plugin-l10n</artifactId>
-    <version>1.1-enterprise</version>
+    <version>1.2-enterprise-SNAPSHOT</version>
     <packaging>glassfish-jar</packaging>
 
     <name>New Relic Notifier Console L10n Plugin</name>
