@@ -39,7 +39,7 @@ package fish.payara.extensions.notifiers.email;
 
 import java.beans.PropertyVetoException;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 
 import com.sun.enterprise.util.StringUtils;
 

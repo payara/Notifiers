@@ -25,7 +25,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>fish.payara.server.internal.payara-modules</groupId>
+            <groupId>fish.payara.server.core.payara-modules</groupId>
             <artifactId>healthcheck-core</artifactId>
             <version>${payara.version}</version>
         </dependency>
