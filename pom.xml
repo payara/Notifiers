@@ -49,10 +49,10 @@
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>5.2020.5</payara.version>
+        <payara.version>6.2023.2</payara.version>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -82,7 +82,7 @@
         <dependencies>
             <!-- Required for the notifier services -->
             <dependency>
-                <groupId>fish.payara.server.internal.common</groupId>
+                <groupId>fish.payara.server.core.common</groupId>
                 <artifactId>internal-api</artifactId>
                 <version>${payara.version}</version>
                 <optional>true</optional>
@@ -258,8 +258,8 @@
                     </executions>
                     <configuration>
                         <excludeGroupIds>
-                            fish.payara.server.internal.common,
-                            fish.payara.server.internal.admingui,
+                            fish.payara.server.core.common,
+                            fish.payara.server.core.admingui,
                             jakarta
                         </excludeGroupIds>
                         <excludeTransitive>true</excludeTransitive>
@@ -270,6 +270,31 @@
                    <groupId>org.apache.maven.plugins</groupId>
                    <artifactId>maven-resources-plugin</artifactId>
                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>[11,18.9)</version>
+                                        <message>You need at least JDK11</message>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>[3.0.3,3.2.1],[3.2.3,)</version>
+                                        <message>You need Maven greater than 3.0.3 (3.2.2 not supported)</message>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
