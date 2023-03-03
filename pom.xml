@@ -2,7 +2,7 @@
 <!--
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-  Copyright (c) [2020-2021] Payara Foundation and/or its affiliates. All rights reserved.
+  Copyright (c) [2020-2023] Payara Foundation and/or its affiliates. All rights reserved.
 
   The contents of this file are subject to the terms of either the GNU
   General Public License Version 2 only ("GPL") or the Common Development
@@ -43,16 +43,16 @@
 
     <groupId>fish.payara.extensions.notifiers</groupId>
     <artifactId>notifiers-parent</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>5.2020.5</payara.version>
+        <payara.version>6.2023.2</payara.version>
 
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -82,7 +82,7 @@
         <dependencies>
             <!-- Required for the notifier services -->
             <dependency>
-                <groupId>fish.payara.server.internal.common</groupId>
+                <groupId>fish.payara.server.core.common</groupId>
                 <artifactId>internal-api</artifactId>
                 <version>${payara.version}</version>
                 <optional>true</optional>
@@ -98,7 +98,7 @@
             <dependency>
                 <groupId>jakarta.platform</groupId>
                 <artifactId>jakarta.jakartaee-api</artifactId>
-                <version>8.0.0</version>
+                <version>10.0.0</version>
                 <optional>true</optional>
             </dependency>
             <dependency>
@@ -130,7 +130,7 @@
             <plugin>
                 <groupId>org.glassfish.hk2</groupId>
                 <artifactId>hk2-inhabitant-generator</artifactId>
-                <version>2.6.1.payara-p1</version>
+                <version>3.0.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -181,7 +181,7 @@
             <plugin>
                 <groupId>org.glassfish.build</groupId>
                 <artifactId>command-security-maven-plugin</artifactId>
-                <version>1.0.10.payara-p1</version>
+                <version>1.0.13</version>
                 <configuration>
                     <isFailureFatal>false</isFailureFatal>
                 </configuration>
@@ -258,8 +258,8 @@
                     </executions>
                     <configuration>
                         <excludeGroupIds>
-                            fish.payara.server.internal.common,
-                            fish.payara.server.internal.admingui,
+                            fish.payara.server.core.common,
+                            fish.payara.server.core.admingui,
                             jakarta
                         </excludeGroupIds>
                         <excludeTransitive>true</excludeTransitive>
@@ -270,6 +270,31 @@
                    <groupId>org.apache.maven.plugins</groupId>
                    <artifactId>maven-resources-plugin</artifactId>
                    <version>2.4</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-versions</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireJavaVersion>
+                                        <version>[11,18.9)</version>
+                                        <message>You need at least JDK11</message>
+                                    </requireJavaVersion>
+                                    <requireMavenVersion>
+                                        <version>[3.0.3,3.2.1],[3.2.3,)</version>
+                                        <message>You need Maven greater than 3.0.3 (3.2.2 not supported)</message>
+                                    </requireMavenVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
