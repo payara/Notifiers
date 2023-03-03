@@ -82,7 +82,6 @@
         <module>xmpp-notifier-core</module>
         <module>xmpp-notifier-console-plugin</module>
         <module>xmpp-notifier-console-plugin-l10n</module>
-<!--    <module>enterprise-backwards-compatibility</module>-->
     </modules>
 
     <dependencyManagement>
