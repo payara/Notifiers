@@ -67,13 +67,6 @@
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
         </dependency>
-
-        <!-- Extra dependencies. Need copying into modules directory -->
-        <dependency>
-            <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-java7</artifactId>
-            <version>${smack.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
             <artifactId>smack-tcp</artifactId>
@@ -90,23 +83,49 @@
             <artifactId>smack-extensions</artifactId>
             <version>${smack.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-im</artifactId>
-            <version>${smack.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xpp3</artifactId>
-            <version>${xpp3.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <!-- Required to copy dependencies into target directory -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <!--
+                        Copy any additional dependencies required for xmpp-notifier-core to work in Payara into
+                        the target dir
+                        The project dependencies will be included automatically as part of the default copy-dependencies
+                        phase therefore they don't need to be included here.
+                    -->
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-im</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.xpp3</artifactId>
+                                    <version>${xpp3.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-java7</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
