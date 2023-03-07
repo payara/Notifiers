@@ -57,6 +57,7 @@
         <smack.version>4.3.4</smack.version>
         <xpp3.version>1.1.4c_7</xpp3.version>
         <jxmpp.version>1.0.3</jxmpp.version>
+        <minidns.version>1.0.4</minidns.version>
     </properties>
 
     <dependencies>
@@ -137,6 +138,11 @@
                                     <groupId>org.jxmpp</groupId>
                                     <artifactId>jxmpp-util-cache</artifactId>
                                     <version>${jxmpp.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.minidns</groupId>
+                                    <artifactId>minidns-core</artifactId>
+                                    <version>${minidns.version}</version>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
