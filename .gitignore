@@ -8,3 +8,4 @@ target/
 .factorypath
 .vscode/
 *.iml
+.idea/
