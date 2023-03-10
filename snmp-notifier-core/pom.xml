@@ -54,7 +54,7 @@
     <name>SNMP Notifier Implementation</name>
     
     <properties>
-        <snmp4j.version>3.4.3</snmp4j.version>
+        <snmp4j.version>3.7.5</snmp4j.version>
     </properties>
 
     <dependencies>
@@ -69,13 +69,4 @@
             <version>${snmp4j.version}</version>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <!-- Required to copy dependencies into target directory -->
-            <plugin>
-                <artifactId>maven-dependency-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>
