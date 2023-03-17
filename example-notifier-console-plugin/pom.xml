@@ -44,9 +44,9 @@
     <parent>
         <groupId>fish.payara.extensions.notifiers</groupId>
         <artifactId>notifiers-parent</artifactId>
-        <version>2.0-enterprise-SNAPSHOT</version>
+        <version>2.0-enterprise</version>
     </parent>
-    <version>2.0-enterprise-SNAPSHOT</version>
+    <version>2.0-enterprise</version>
     <artifactId>example-notifier-console-plugin</artifactId>
     <packaging>glassfish-jar</packaging>
 
