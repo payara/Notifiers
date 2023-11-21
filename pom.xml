@@ -324,7 +324,7 @@
             </snapshots>
             <id>payara-nexus</id>
             <name>Payara Public Artifacts</name>
-            <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
+            <url>https://nexus.dev.payara.fish/repository/payara-artifacts/</url>
         </repository>
     </repositories>
 
@@ -332,7 +332,7 @@
     <distributionManagement>
         <repository>
             <id>payara-nexus</id>
-            <url>https://nexus.payara.fish/repository/payara-artifacts/</url>
+            <url>https://nexus.dev.payara.fish/repository/payara-artifacts/</url>
         </repository>
     </distributionManagement>
     <profiles>
