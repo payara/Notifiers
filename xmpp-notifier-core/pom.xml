@@ -54,8 +54,10 @@
     <name>XMPP Notifier Implementation</name>
 
     <properties>
-        <smack.version>4.3.4</smack.version>
+        <smack.version>4.4.6</smack.version>
         <xpp3.version>1.1.4c_7</xpp3.version>
+        <jxmpp.version>1.0.3</jxmpp.version>
+        <minidns.version>1.0.4</minidns.version>
     </properties>
 
     <dependencies>
@@ -66,13 +68,6 @@
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
-        </dependency>
-
-        <!-- Extra dependencies. Need copying into modules directory -->
-        <dependency>
-            <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-java7</artifactId>
-            <version>${smack.version}</version>
         </dependency>
         <dependency>
             <groupId>org.igniterealtime.smack</groupId>
@@ -91,14 +86,9 @@
             <version>${smack.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.igniterealtime.smack</groupId>
-            <artifactId>smack-im</artifactId>
-            <version>${smack.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.xpp3</artifactId>
-            <version>${xpp3.version}</version>
+            <groupId>org.jxmpp</groupId>
+            <artifactId>jxmpp-jid</artifactId>
+            <version>${jxmpp.version}</version>
         </dependency>
     </dependencies>
 
@@ -106,7 +96,88 @@
         <plugins>
             <!-- Required to copy dependencies into target directory -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <!--
+                        Copy any additional dependencies required for xmpp-notifier-core to work in Payara into
+                        the target dir
+                        The project dependencies will be included automatically as part of the default copy-dependencies
+                        phase therefore they don't need to be included here.
+                    -->
+                    <execution>
+                        <id>copy</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-im</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-java8</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-core</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-xmlparser</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-im</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-streammanagement</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.igniterealtime.smack</groupId>
+                                    <artifactId>smack-xmlparser-stax</artifactId>
+                                    <version>${smack.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.aries.spifly</groupId>
+                                    <artifactId>org.apache.aries.spifly.dynamic.bundle</artifactId>
+                                    <version>1.3.6</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.apache.servicemix.bundles</groupId>
+                                    <artifactId>org.apache.servicemix.bundles.xpp3</artifactId>
+                                    <version>${xpp3.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jxmpp</groupId>
+                                    <artifactId>jxmpp-core</artifactId>
+                                    <version>${jxmpp.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.jxmpp</groupId>
+                                    <artifactId>jxmpp-util-cache</artifactId>
+                                    <version>${jxmpp.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>org.minidns</groupId>
+                                    <artifactId>minidns-core</artifactId>
+                                    <version>${minidns.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
