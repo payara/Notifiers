@@ -74,6 +74,7 @@
         <module>slack-notifier-core</module>
         <module>slack-notifier-console-plugin</module>
         <module>slack-notifier-console-plugin-l10n</module>
+        <module>snmp-repackaged</module>
         <module>snmp-notifier-core</module>
         <module>snmp-notifier-console-plugin</module>
         <module>snmp-notifier-console-plugin-l10n</module>

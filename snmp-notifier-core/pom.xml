@@ -53,7 +53,7 @@
     <name>SNMP Notifier Implementation</name>
     
     <properties>
-        <snmp4j.version>3.7.5</snmp4j.version>
+        <snmp4j.version>3.8.2</snmp4j.version>
     </properties>
 
     <dependencies>
