@@ -83,6 +83,7 @@
         <module>xmpp-notifier-core</module>
         <module>xmpp-notifier-console-plugin</module>
         <module>xmpp-notifier-console-plugin-l10n</module>
+        <module>smack-core-repackager</module>
     </modules>
 
     <dependencyManagement>
