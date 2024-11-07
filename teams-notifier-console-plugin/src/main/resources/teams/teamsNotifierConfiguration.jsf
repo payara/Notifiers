@@ -45,7 +45,7 @@ holder.
 <!define name="content">
 <event>
     <!beforeCreate
-        setPageSessionAttribute(key="onlyUseAttrs", value={"id", "enabled", "dynamic", "target"});
+        setPageSessionAttribute(key="onlyUseAttrs", value={"id", "enabled", "dynamic", "filter", "target"});
         getRequestValue(key="configName" value="#{pageSession.configName}" );
         createMap(result="#{pageSession.attrsMap}")
         mapPut(map="#{pageSession.attrsMap}" key="target" value="#{pageSession.configName}");
