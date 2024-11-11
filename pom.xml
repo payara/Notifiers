@@ -2,7 +2,7 @@
 <!--
   DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
 
-  Copyright (c) 2020-2022 Payara Foundation and/or its affiliates. All rights reserved.
+  Copyright (c) 2020-2024 Payara Foundation and/or its affiliates. All rights reserved.
 
   The contents of this file are subject to the terms of either the GNU
   General Public License Version 2 only ("GPL") or the Common Development
@@ -43,13 +43,13 @@
 
     <groupId>fish.payara.extensions.notifiers</groupId>
     <artifactId>notifiers-parent</artifactId>
-    <version>1.1-enterprise-SNAPSHOT</version>
+    <version>1.2-enterprise-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>5.27.0</payara.version>
+        <payara.version>5.69.0</payara.version>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
