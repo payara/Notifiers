@@ -49,7 +49,7 @@
     <name>Payara Notifiers Parent</name>
 
     <properties>
-        <payara.version>6.19.0</payara.version>
+        <payara.version>6.21.0</payara.version>
 
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
