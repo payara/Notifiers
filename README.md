@@ -1,5 +1,8 @@
 # Payara Notifiers
 
+## ARCHIVED
+This has been moved into the Payara Enterprise codebase and will no longer be maintained here
+
 This repository contains all of the notifiers for the Payara Server notification service that are not included in the Payara Community release. They can all be built and deployed to Payara Server Community Edition to add that functionality to the server.
 
 Each notifier consists of 2 parts:
